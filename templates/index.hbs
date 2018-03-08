@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+{{>head}}
+
+<body>
+
+    {{>hero}}
+    <section class="section">
+        <div class="container narrow">
+            <!-- post content -->
+            {{#each this}}
+            <a class="button is-fullwidth" href="{{this.url}}.html">{{this.title}}</a>
+            <br> {{/each}}
+            <!-- post content -->
+            
+        </div>
+    </section>
+    {{>footer}}
+</body>
+
+</html>

@@ -1,5 +1,3 @@
-I started writing code in Rust few months ago. I don't remember exactly why I started, but I soon realised it is a language of the future. Most of new languages focus mostly on syntax, Rust tries to solves problems that currently popular languages have and explore new ideas. I am using mostly C# at my work and I often wish I could use some of the features Rust have. I will try to present what features I miss in C# after programming in Rust for some time.
-
 # Option
 
 Rust uses `Option` to prevent `NullReferenceException` on runtime. Rust does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
@@ -33,7 +31,7 @@ fn foo()
 So what can we do with `Option`? Why not just use plain nullable type?
 Option is a wrapper so it does not allow directly access wrapped value inside it. To access the value, you need to unwrap it first. This prevent's from calling a function or accessing a field from something that does not exists.
 
-We can use `unwrap()` function to get the value inside, but it is not recommende. It is dirty and quick solution for prototyping.
+We can use `unwrap()` function to get the value inside, but it is not recommended. It is dirty and quick solution for prototyping.
 
 `unwrap` tries to take value from the `Option` but panics (crash) if there is no value.
 Another way would be using `expect()` function to unwrap with custom error, as in the previous example.
@@ -77,9 +75,9 @@ So what is going on here? There is some background magic that needs to be explai
 First, `extern` and `using` statements are just importing things from another library.
 Then you can see `Result<String, Error>` in return value signature. This means that you will get the "first line of file" wrapped in Result or get an error wrapped in Result.
 
-The first line of this function have `?` (question mark) in the end. It also states that the return value will be String. Why not `Option` or `Result`? Reading file can fail! Actually, `read_file()` returns a `Result<String, Error>`. But we not also calling a function, we also use a safe unwrapper symbol - `?` after getting the `Result`. `?` is just a shortcut for `try!` macro. If unwrapping (using `?`) fails, Rust will just return error from `read_file()` function early. If you expand this, this would be something like this:
+The first line of this function have `?` (question mark) in the end. It also states that the return value will be String. Why not `Option` or `Result`? Reading file can fail! Actually, `read_file()` returns a `Result<String, Error>`. But we not only also calling a function, we also use a safe unwrapper symbol - `?` after getting the `Result`. `?` is just a shortcut for `try!` macro. If unwrapping (using `?`) fails, Rust will just return error from `read_file()` function early. If you expand this, this would be something like this:
 
-```rust
+```
 let file_result: Result<String, Error> = read_file("some_text.txt");
 //if we get error we just return it
 if file_result.is_error()
@@ -110,7 +108,7 @@ Well there is a reason.
 
 # Failure
 
-`failure` crate (crate means library) is a new library for error handling. Before `failure`, people were using `std::error::Error` from standard library or `error_chain` crate. Why so many choices about error handling? Shouldn't errors be in the standard library? Well, one of rust greatest strengths is flexibility. Standard library is reduced to necessary minimum. Every additional functionality needs to be imported from external library. 
+`failure` crate (crate means library) is a new library for error handling. Before `failure`, people were using `std::error::Error` from standard library or `error_chain` crate. Why so many choices about error handling? Shouldn't errors be in the standard library? Well, one of Rust greatest strengths is flexibility. Standard library is reduced to necessary minimum. Every additional functionality needs to be imported from external library. 
 
 Still, putting error handling in external library seems odd. But error handling is also a part of a language that can be improved. If we decide to use one version of error handling we are doomed to use it forever. If we try to change it, when it is inside the standard library, we break whole language. Moving important parts to external libraries give Rust an opportunity to "iterate" through different solutions. That is how `failure` was born. First, we had only standard `Error`. But the functionality was not enough, and writing custom errors was bulky. So someone came up with `error_chain` crate for better error handling. Still, after using the `error_chain`, someone came up with better, more elegant solution which would eliminate downsides of `error_chain`.
 
@@ -214,7 +212,7 @@ struct Point {
 ```
 You can "derive" some traits. Deriving is just using macros for generating an implementation. So a lot of times you don't need to even implement the trait, because macro is doing it for you.
 
-It is also an "abstraction without overhead" (term borrowed from official rust blog). What it means is that you usually get some overhead when using generics. But with traits you don't have any overhead (static dispatch). So it is faster than generics (dynamic dispatch). Still, you can use generics in Rust so the solution is very flexible.
+It is also an "abstraction without overhead" (term borrowed from official Rust blog). What it means is that you usually get some overhead when using generics. But with traits you don't have any overhead (static dispatch). So it is faster than generics (dynamic dispatch). Still, you can use generics in Rust so the solution is very flexible.
 
 # Syntax
 
@@ -258,11 +256,14 @@ I like how Rust changed `int` to `i32`. "What is the point?", you could say. How
 
 # Safety
 
-Rust wrappers, lifetimes and immutability on default creates a great safety net for the software. Some errors which would be discovered on runtime in another language is not even compiling in Rust, because of the safety guarantees. "If it compiles, it works" is the motto of Rust. This is THE safest language (comparable to haskell) and that is why it's used for multithreading and programming reliable systems.
+Rust unique features prevent lot of problems which would otherwise appear on runtime. If something compiles, it is probably much safer than same thing written in different language.
+Option prevents null exceptions, lifetimes/borrowing prevents from data races.
+
+"If it compiles, it works" is the motto of Rust. This is THE safest language (comparable to haskell) and that is why it's used for multithreading and programming reliable systems.
 
 # Compiler errors
 
-Compiler errors are beautiful in rust. If you write this:
+Compiler errors are beautiful in Rust. If you write this:
 ```
 fn main() {
        let v = Vec::new();

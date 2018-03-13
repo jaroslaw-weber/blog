@@ -2,3 +2,11 @@ title ="C# vs Rust"
 url = "csharp-vs-rust"
 time = "7.3.2018"
 content = "" #workaround for index error
+intro = '''
+I started writing code in Rust few months ago. 
+I don't remember exactly why I started, but I soon realised it is a language of the future. 
+Most of new languages focus mostly on syntax, 
+Rust tries to solves problems that currently popular languages have and explore new ideas. 
+I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
+I will try to present what features I miss in C# after programming in Rust for some time.
+'''

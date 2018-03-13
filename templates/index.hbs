@@ -7,12 +7,17 @@
     {{>hero}}
     <section class="section">
         <div class="container narrow">
+            {{>about}}
             <!-- post content -->
             {{#each this}}
-            <a class="button is-fullwidth" href="{{this.url}}.html">{{this.title}}</a>
-            <br> {{/each}}
-            <!-- post content -->
+            <a href="{{this.url}}.html" class="title button is-fullwidth is-dark">> {{this.title}}</a>
             
+            <p>{{this.intro}}</p>
+            <br>
+            <br> {{/each}}
+
+            <!-- post content -->
+
         </div>
     </section>
     {{>footer}}

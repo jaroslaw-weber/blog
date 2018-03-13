@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog - Jaroslaw Weber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Mina', sans-serif;
+        }
+
+        .codeblock {
+            margin: 1rem;
+        }
+
+        .text {
+            margin: 1rem;
+        }
+
+        .bigtext {
+
+            margin-top: 2rem;
+        }
+        .narrow {
+            max-width: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="hero is-dark">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="index.html">@ Blog @</a>
+        </div>
+    </nav>
+</section>
+    <section class="section">
+        <div class="container narrow">
+            <!-- post content -->
+            <h1 class="title">Rust crates I use</h1>
+            <p>This is an introduction of few crates I used in the past and that I found very useful.</p>
+            <h1 class="title bigtext">failure</h1>
+<pre><code>use failure::Error;
+fn foo(a: i32) -&gt; Result&lt;String, Error&gt;
+{
+    let x = foo2(a)?;
+    let y = foo3(x)?;
+    ensure!(y&gt;2);
+
+    //...
+}
+</code></pre>
+<p class="text">My favorite crate for error handling. Using standard library is bulky, and I didn't like that I need to use macros for everything in error-chain.</p>
+<p class="text">We can use <code>failure::Error</code> to group multiple errors. We don't need to use <code>Box&lt;Error&gt;</code> everywhere. We can also ensure some conditions with simple macro.</p>
+<p class="text">This is as simple as unwrapping, so we can prototype easily without losing the stability!</p>
+<h1 class="title bigtext">github-gql-rs</h1>
+<pre><code>let mut g = Github::new(&quot;token&quot;).unwrap();
+    let (headers, status, json) = g.query::&lt;Value&gt;(
+        &amp;Query::new_raw(r#&quot;
+
+{
+  user(login: &quot;SergioBenitez&quot;) {
+    repository(name: &quot;Rocket&quot;) {
+      stargazers {
+        totalCount
+      }
+    }
+  }
+}
+
+
+&quot;#).unwrap();
+</code></pre>
+<p class="text">Github introduced GraphQL as their 4th version of API. What is great about the GraphQL is that you can get a lot of information with only one request (which would be impossible with simple REST). This crate is just a simple wrapper for GraphQL API and uses <code>&amp;str</code> requests, the versioning is still on 0.0.1 so it is not very stable, but still it was better experience and more flexible than REST version of the API.</p>
+<p class="text">To check and fix the formatting of our request we can use GraphQL explorer:</p>
+<p class="text">https://developer.github.com/v4/explorer/</p>
+<h1 class="title bigtext">serde_json</h1>
+<pre><code>#[derive(Serialize, Deserialize)]
+struct Car {
+    name: String,
+    color: String,
+    comments: Vec&lt;String&gt;
+}
+
+fn get_car() -&gt; Result&lt;Car, Error&gt; {
+    let data = r#&quot;{
+                    &quot;name&quot;: &quot;old car&quot;,
+                    &quot;color&quot;: &quot;red&quot;,
+                    &quot;comments&quot;: [
+                      &quot;wow!&quot;,
+                      &quot;great car!&quot;
+                    ]
+                  }&quot;#;
+    let c: Car = serde_json::from_str(data)?;
+    Ok(c)
+}
+</code></pre>
+<p class="text">Everyone using Rust know this library. This is a library for parsing json. With <code>serde_derive</code> you can deserialize anything very fast and easily.</p>
+<h1 class="title bigtext">toml</h1>
+<pre><code>let toml_str = r#&quot;
+        name = &quot;Joe&quot;
+        age = 32
+        favorite_color = &quot;red&quot;
+        [[kids]]
+        name = &quot;Baby 1&quot;
+        [[kids]]
+        name = &quot;Baby 2&quot;
+    &quot;#;
+
+let decoded: Person = toml::from_str(toml_str).unwrap();
+</code></pre>
+<p class="text">To be honest, I don't use so much <code>serde_json</code> anymore. I ditched it after I found out about Toml - my favorite language for data serialization. It is more readable and easier to write than json, it is much simpler than YAML.</p>
+<p class="text">More about Toml:</p>
+<p class="text">https://github.com/toml-lang/toml</p>
+<h1 class="title bigtext">clap</h1>
+<pre><code> let matches = App::new(&quot;My first app&quot;)
+                          .version(&quot;1.0&quot;)
+                          .author(&quot;Me &lt;me@gmail.com&gt;&quot;)
+                          .about(&quot;Does nothing&quot;)
+                          .arg(Arg::with_name(&quot;name&quot;)
+                               .short(&quot;n&quot;)
+                               .long(&quot;name&quot;)
+                               .value_name(&quot;NAME&quot;)
+                               .help(&quot;Help me knows your name&quot;)
+                          .get_matches();
+
+    let name = matches.value_of(&quot;name&quot;).unwrap_or(&quot;World);
+    println!(&quot;Hello {}!&quot;, name);
+</code></pre>
+<p class="text">Want to make a simple CLI application? <code>clap</code> is the way to go.</p>
+<h1 class="title bigtext">handlebars-rust</h1>
+<pre><code>let mut reg = Handlebars::new();
+let template = &quot;Hello {{name}}&quot;;
+let data = json!({&quot;name&quot;: &quot;World&quot;});
+let rendered = reg.render_template(template, &amp;data).unwrap();
+
+println!(&quot;{}&quot;, rendered);
+</code></pre>
+<p class="text">Want to use templates for your website? I am using this library for almost all my static and dynamic website projects. The ability to break HTML to smaller parts is something I don't want to part with.</p>
+<h1 class="title bigtext">Rocket</h1>
+<pre><code>#[get(&quot;/&lt;name&gt;&quot;)]
+fn hello(name: String,) -&gt; String {
+    format!(&quot;Hello {}&quot;, name)
+}
+
+fn main() {
+    rocket::ignite().mount(&quot;/hello&quot;, routes![hello]).launch();
+}
+</code></pre>
+<p class="text">The easiest way to make a dynamic website with Rust is Rocket. It uses macros and nightly (early development version) features of Rust so you cannot use it with stable version of the language, but it is a still a great library!</p>
+<h1 class="title bigtext">csv</h1>
+<pre><code>#[derive(Debug, Deserialize)]
+struct Map {
+    data: String,
+    template: String,
+    output: String,
+}
+
+fn foo()-&gt; Result&lt;(), Error&gt;
+{
+    let mut v = Vec::new();
+    let mut rdr = csv::Reader::from_path(&quot;map.csv&quot;)?;
+    for result in rdr.deserialize() {
+        let m: Map = result?;
+        v.push(m);
+    }
+    //...
+}
+</code></pre>
+<p class="text">Very fast and easy to setup csv parsing library. As every serialization library, it is compatible with <code>serde</code> and <code>serde_derive</code> which means that most of the serialization in Rust is very centralized and it is very easy to use other serialization libraries after you learn one.</p>
+<h1 class="title bigtext">slime</h1>
+<pre><code>let s = Slime::default();
+s.initialize()
+let data = s.load_toml_data(&quot;data&quot;)
+    .expect(&quot;failed to load toml data&quot;);
+s.generate(&quot;index&quot;, &quot;index&quot;, &amp;data)
+    .expect(&quot;failed to generate page&quot;);
+</code></pre>
+<p class="text">This is actually a crate I made, but also a crate I used a lot. It is a flexible site generator. I made this blog with <code>slime</code>. If you want to have static page but also want to customize every aspect of it, it is great choice. Current solutions (jekyll, gutenberg) are great but are not very flexible. <code>slime</code> has also a binary version, <code>slime-mini</code>, which works without writing any Rust code! Great for prototyping!</p>
+
+            <!-- post content -->
+        </div>
+    </section>
+    <section class="section">
+    <div class="container">
+        <hr>
+        <footer>
+            <div class="has-text-centered">
+                <p class="title">contact</p>
+                <a class="button" href="mailto:jaroslaw.weber@gmail.com">jaroslaw.weber@gmail.com</a>
+            </div>
+        </footer>
+    </div>
+</section>
+</body>
+
+</html>

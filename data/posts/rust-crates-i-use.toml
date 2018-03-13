@@ -1,0 +1,5 @@
+title ="Rust crates I use"
+url = "rust-crates-i-use"
+time = "14.3.2018"
+content = "" #workaround for index error
+intro = "This is an introduction of few crates I used in the past and that I found very useful."

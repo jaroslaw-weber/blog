@@ -2,6 +2,12 @@ body {
     font-family: 'Mina', sans-serif;
 }
 
+:root {
+    --primary: #52667f;
+    --primary-light: #7995b7;
+    --primary-reversed: white;
+}
+
 .codeblock {
     margin: 1rem;
 }
@@ -18,10 +24,37 @@ body {
     max-width: 600px;
 }
 
-.primary-bg {
-    background-color: darkred;
+.primary {
+    background-color: var(--primary);
+    color: var(--primary-reversed);
 }
 
-.white-text {
-    color: white;
+.primary-text {
+    color: var(--primary);
+}
+
+.primary-text:hover {
+    color: var(--primary-light);
+}
+
+.article-image{
+    border-radius: 20px;
+    object-fit: cover;
+    height: 300px;
+    width: 400px;
+}
+
+a {
+    color: var(--primary);
+}
+
+pre {
+    border-radius: 10px;
+}
+
+code {
+    background-color: var(--primary-light);
+    
+    border-radius: 4px;
+    color: var(--primary-reversed);
 }

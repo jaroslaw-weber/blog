@@ -1,0 +1,13 @@
+title = "[idea] crates.io - sort by direct download"
+url = "crates-io-sort-by-direct-download"
+time = "2018-03-15"
+content = "" #workaround for index error
+image="https://image.freepik.com/free-vector/hands-with-medals-background-design_1212-271.jpg"
+image_contribution='''
+<a href='https://www.freepik.com/free-vector/hands-with-medals-background-design_1001399.htm'>Designed by Freepik</a>
+'''
+intro = '''
+I was looking on most downloaded crates on crates.io the other day and I noticed something interesting. 
+Most downloaded crates are not the most popular crates. I posted an issue on crates.io repository,
+but I also wanted to add it here.
+'''

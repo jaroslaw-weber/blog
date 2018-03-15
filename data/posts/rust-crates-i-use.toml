@@ -1,5 +1,10 @@
 title ="Rust crates I use"
 url = "rust-crates-i-use"
-time = "14.3.2018"
+time = "2018-03-14"
 content = "" #workaround for index error
+
+image="https://image.freepik.com/free-vector/flat-carton-box-flying-with-wings_23-2147679452.jpg"
+image_contribution='''
+<a href='https://www.freepik.com/free-vector/flat-carton-box-flying-with-wings_1269944.htm'>Designed by Freepik</a>
+'''
 intro = "This is an introduction of few crates I used in the past and that I found very useful."

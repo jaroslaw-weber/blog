@@ -8,41 +8,25 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Mina', sans-serif;
-        }
-
-        .codeblock {
-            margin: 1rem;
-        }
-
-        .text {
-            margin: 1rem;
-        }
-
-        .bigtext {
-
-            margin-top: 2rem;
-        }
-        .narrow {
-            max-width: 600px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
-    <section class="hero is-dark">
+    <section class="hero primary">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">@ Blog @</a>
+            <div class="navbar-item primary"><i class="fas fa-plane"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io/blog">Blog</a>
+            <div class="navbar-item primary"><i class="fas fa-cloud"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io">Portfolio</a>
         </div>
     </nav>
 </section>
     <section class="section">
         <div class="container narrow">
             <!-- post content -->
-            <h1 class="title">C# vs Rust</h1>
+            <h1 class="title has-text-centered primary-text">C# vs Rust</h1>
             <p>I started writing code in Rust few months ago. 
 I don't remember exactly why I started, but I soon realised it is a language of the future. 
 Most of new languages focus mostly on syntax, 
@@ -50,7 +34,14 @@ Rust tries to solves problems that currently popular languages have and explore 
 I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
 I will try to present what features I miss in C# after programming in Rust for some time.
 </p>
-            <h1 class="title bigtext">Option</h1>
+<br>
+            <div class="has-text-centered">
+            <br>
+                <img class="article-image" src="https://image.freepik.com/free-vector/website-rating-feedback_1325-235.jpg">
+                <br> <a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
+
+            </div>
+            <h1 class="title bigtext primary-text">Option</h1>
 <p class="text">Rust uses <code>Option</code> to prevent <code>NullReferenceException</code> on runtime. Rust does not have <code>null</code>. Instead, you can express &quot;lack of value&quot; with an <code>Option</code> wrapper. It is so much easier to work with options than nulls.
 Let's say we have a function in C#:</p>
 <pre><code>void DoSomething(SomeClass someClass)
@@ -89,7 +80,7 @@ In C# we would need to write it like this:</p>
 }
 </code></pre>
 <p class="text">As you can see, Rust code is more compact and elegant. You could write it even shorter, if you omit the type signature <code>Option&lt;String&gt;</code>.</p>
-<h1 class="title bigtext">Result &amp; Error handling</h1>
+<h1 class="title bigtext primary-text">Result &amp; Error handling</h1>
 <p class="text">Crashing an app is not always a good way to handle an error.</p>
 <p class="text">So what would you do to avoid crashes in C#? You would probably write null checks in every possible place.
 I don't want to see this monster. Rust have instead something called <code>Result</code>.</p>
@@ -124,15 +115,15 @@ Believe me I tried.</p>
 <p class="text">So what was the last line, with <code>Ok</code> in it? We need to return the <code>Result</code>. We cannot just return String.
 <code>Ok(value)</code> is just creating a <code>Result</code> wrapper for the value.</p>
 <p class="text">Also, did you notice lack of <code>return</code> keyword? It can be ommited in Rust. Makes your code little shorter.</p>
-<h1 class="title bigtext">Why use wrappers?</h1>
+<h1 class="title bigtext primary-text">Why use wrappers?</h1>
 <p class="text">It is all about the control. We, as a library user, can decide that we don't want to crash the application, even if some library (for example, parsing json) fails. Instead of crashing with exception, we can deal with it in more elegant way, and provide a flow without bulky and easy to forget <code>try/catch</code> statement. Every library in C# can crash unexpectedly. If you don't wrap the methods in <code>try/catch</code> you will have a potential invisible crash waiting there.</p>
 <p class="text">Most of libraries in Rust don't crash when something goes wrong. You get a value in a <code>Result</code> wrapper. You decide what do you want to do if something goes wrong.</p>
 <p class="text">Some people may wonder, why did we imported the external crate to handle error.
 Well there is a reason.</p>
-<h1 class="title bigtext">Failure</h1>
+<h1 class="title bigtext primary-text">Failure</h1>
 <p class="text"><code>failure</code> crate (crate means library) is a new library for error handling. Before <code>failure</code>, people were using <code>std::error::Error</code> from standard library or <code>error_chain</code> crate. Why so many choices about error handling? Shouldn't errors be in the standard library? Well, one of Rust greatest strengths is flexibility. Standard library is reduced to necessary minimum. Every additional functionality needs to be imported from external library.</p>
 <p class="text">Still, putting error handling in external library seems odd. But error handling is also a part of a language that can be improved. If we decide to use one version of error handling we are doomed to use it forever. If we try to change it, when it is inside the standard library, we break whole language. Moving important parts to external libraries give Rust an opportunity to &quot;iterate&quot; through different solutions. That is how <code>failure</code> was born. First, we had only standard <code>Error</code>. But the functionality was not enough, and writing custom errors was bulky. So someone came up with <code>error_chain</code> crate for better error handling. Still, after using the <code>error_chain</code>, someone came up with better, more elegant solution which would eliminate downsides of <code>error_chain</code>.</p>
-<h1 class="title bigtext">Cargo</h1>
+<h1 class="title bigtext primary-text">Cargo</h1>
 <p class="text">Cargo is a package manager, something like NuGet for C#. To add a package for C#, we would add it with GUI in Visual Studio. I don't think the package manager should be embedded into IDE. Package manager should be something standalone, like &quot;npm&quot; or &quot;homebrew&quot;.</p>
 <p class="text">We could probably try to edit nuget.config file. Let's see example packages in nuget.config:</p>
 <pre><code>&lt;packageSources&gt;
@@ -153,7 +144,7 @@ toml = &quot;0.4.5&quot;
 easy_fs = {git = &quot;https://github.com/jaroslaw-weber/easy_fs&quot;} 
 </code></pre>
 <p class="text">So simple that someone who doesn't even know Toml can read and edit it. Adding a crate (library) is very simple. You just edit the .toml file and add a line with crate name and version. When you build the project, crates will automatically download. When you download someone's repository and want to test it, you don't need to set up anything, you just run <code>cargo build</code> from command line and dependencies are automatically downloaded and installed (localy! because different projects are using different version of libraries). If you want to change the library version you just change the number in the config file and rebuild it again. So easy and clean! And don't need to install anything!</p>
-<h1 class="title bigtext">Immutability by default</h1>
+<h1 class="title bigtext primary-text">Immutability by default</h1>
 <p class="text">When declaring a variable in Rust, the variable is immutable by default. If we would try do this:</p>
 <pre><code>let v = Vec::new();
 v.push(1);
@@ -164,14 +155,14 @@ v.push(1);
 </code></pre>
 <p class="text">to be able to mutate the variable.</p>
 <p class="text">A lot of data we pass around is read-only. If we deserialize some data from csv or json, we usually don't want anyone to play with it. To ensure it, we would need to create properties. Too much mutable state is not very safe. With explicit mutability, we can see where the variable could be changed, and if something is wrong with data, we can quickly pinpoint the potential culprit.</p>
-<h1 class="title bigtext">Macros</h1>
+<h1 class="title bigtext primary-text">Macros</h1>
 <p class="text">Have you ever tried generate code with C#? You can do it with T4 templates or try manually generating files. If you ever make mistake in the template or generating script and generate it, you will need some time to undo it (probably reseting the changes with git command). Also you need to actually generate the code to check if template is valid. Not very pleasant experience.</p>
 <p class="text">What else could you do? You could use reflection and make your implementation 3 times slower. Not a great solution also.</p>
 <p class="text">Macros are just a way to generate code without creating new files.
 If you ever tried C++ macros you may think macros are evil. Overusing macros is bad practice, but no macros creates lot of boilerplate code.</p>
 <p class="text">Rust macros are safer. Basically there are 2 types of macros: function-like and attribute-like.
 Macros enables you to statically check the correctness. Compiler won't compile your code if something is wrong with macro. You are also not creating any new files, and can insert macros almost anywhere. This prevents you from creating too many files when you are doing a lot of code generation, and let keep your project clean and simple.</p>
-<h1 class="title bigtext">Full control over memory</h1>
+<h1 class="title bigtext primary-text">Full control over memory</h1>
 <p class="text">Rust does not have garbage collector. GC has a runtime overhead. If you want to have faster implementation of something in C# you would have to write it in another language and import as <code>.dll</code> file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called &quot;lifetimes&quot;. Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than &quot;reference counting&quot; (and smart pointers) which you may know from other languages, like Swift or C++.</p>
 <pre><code>fn foo()
 {
@@ -180,7 +171,7 @@ Macros enables you to statically check the correctness. Compiler won't compile y
 }
 </code></pre>
 <p class="text"><code>x</code> and <code>y</code> would be released from memory when <code>foo()</code> ends. Even without the garbage collector, you don't need to manage memory manually.</p>
-<h1 class="title bigtext">Traits</h1>
+<h1 class="title bigtext primary-text">Traits</h1>
 <p class="text">Traits are like interfaces in C#, but traits can also contain implementation. For example:</p>
 <pre><code>trait HaveExtension
 {
@@ -203,7 +194,7 @@ struct Point {
 </code></pre>
 <p class="text">You can &quot;derive&quot; some traits. Deriving is just using macros for generating an implementation. So a lot of times you don't need to even implement the trait, because macro is doing it for you.</p>
 <p class="text">It is also an &quot;abstraction without overhead&quot; (term borrowed from official Rust blog). What it means is that you usually get some overhead when using generics. But with traits you don't have any overhead (static dispatch). So it is faster than generics (dynamic dispatch). Still, you can use generics in Rust so the solution is very flexible.</p>
-<h1 class="title bigtext">Syntax</h1>
+<h1 class="title bigtext primary-text">Syntax</h1>
 <p class="text">It is my personal preference, but I find Rust's syntax more elegant than C#.</p>
 <p class="text">Functions are more readable because of the snake case. <code>ThisIsVeryLongFunctionName</code> would be <code>this_is_very_long_function_name</code> in Rust. Rust is very minimalistic in all aspects, hiding unnecessary complexity, but also being explicit about important things.</p>
 <pre><code>using System;
@@ -234,11 +225,11 @@ namespace HelloWorld
 <p class="text">Last line (without semicolon) is just returning a value. <code>return</code> is really redundant in C#.</p>
 <p class="text">Rust deals with <code>Option</code> and <code>Result</code> using only <code>?</code>. It is very simple, and yet very powerful. It is similar in functionality to <code>??</code> (&quot;elvis operator&quot;) in C# for nullchecks.</p>
 <p class="text">I like how Rust changed <code>int</code> to <code>i32</code>. &quot;What is the point?&quot;, you could say. How about <code>f32</code> or <code>u64</code>? In C# you would write <code>float</code> or <code>ulong</code> which is longer.</p>
-<h1 class="title bigtext">Safety</h1>
+<h1 class="title bigtext primary-text">Safety</h1>
 <p class="text">Rust unique features prevent lot of problems which would otherwise appear on runtime. If something compiles, it is probably much safer than same thing written in different language.
 Option prevents null exceptions, lifetimes/borrowing prevents from data races.</p>
 <p class="text">&quot;If it compiles, it works&quot; is the motto of Rust. This is THE safest language (comparable to haskell) and that is why it's used for multithreading and programming reliable systems.</p>
-<h1 class="title bigtext">Compiler errors</h1>
+<h1 class="title bigtext primary-text">Compiler errors</h1>
 <p class="text">Compiler errors are beautiful in Rust. If you write this:</p>
 <pre><code>fn main() {
        let v = Vec::new();
@@ -261,20 +252,20 @@ Option prevents null exceptions, lifetimes/borrowing prevents from data races.</
 }
 </code></pre>
 <p class="text">We listened to the compiler and now it is working!</p>
-<h1 class="title bigtext">Multiplatform support</h1>
+<h1 class="title bigtext primary-text">Multiplatform support</h1>
 <p class="text">C# is a Microsoft's baby. It is kind of multiplatform, but everything started on Windows. So there are some things you can do only on Windows.</p>
 <p class="text">I tried removing all unused usings from the project. I would need to pay for Resharper and use Windows to do that.</p>
 <p class="text">I tried to install docfx on mac. I couldn't because there was a bug &quot;linux and mac only&quot;.
 I often hit the &quot;not windows, sorry&quot; wall, those two examples are from last month only.
 The tooling in Rust is open source and multiplatform from the very beginning.</p>
-<h1 class="title bigtext">Future of Rust and C#</h1>
+<h1 class="title bigtext primary-text">Future of Rust and C#</h1>
 <p class="text">Rust have a nightly (early development) channel - you can try features before they are stabilised. New features needs to be proposed and implemented, but this process is much faster than in C#. Many people are using nightly channel, and each month there are new, exciting features added to the language. If it's not a breaking change it will probably be added to stable eventually.
 Rust provides great environment for experimenting, but also make sure that only well thought and well tested features are added to stable version of the language. Each feature needs to be discussed before the implementation.</p>
 <p class="text">C# is going to probably implement a lot of features that Rust already have.  There are already propositions for non-nullable references as default (which would reduce null exceptions on runtime, probably going to be released in 8.0 version of the language). I also saw macros proposition but I think it is a long way from people even thinking about an actual implementation.</p>
 <p class="text">Rust currently uses semver for versioning and for did not yet implement any breaking change and is still on version 1.x . So the language is very stable and already used in multiple projects.
 There are some plans to implement &quot;epochs&quot; (although the naming may change). It is a new type of versioning of Rust. &quot;epochs&quot; in Rust would allow language to introduce breaking changes with warning periods, which would allow the language to ditch old, obsolete solutions, but also create a way for a transition to new, better version of Rust. If you ever used python, you've probably heard about problems when moving from python 2 to python 3. Breaking changes are good, but language need a transition system to avoid breakage of ecosystem (like the one that happened to python).</p>
 <p class="text">Even with epochs, the Rust team is going to ensure that Rust is stable, and every breaking change is going to be well discussed and have very long transition period.</p>
-<h1 class="title bigtext">What is better in C#?</h1>
+<h1 class="title bigtext primary-text">What is better in C#?</h1>
 <p class="text">Rust is still a young language and still needs some improvement. Personally, I would probably use Rust more, if it had a great GUI library. There are some GUI solutions currently, but nothing really outstanding. We need something like Electron but with Rust.</p>
 <p class="text">Rust may be also more difficult when creating a game. Rust is great for CLI apps. But it is so much easier to work with Unity3D than creating a game in any Rust game engine library. Mainly because of the Editor.
 Rust is generally more difficult. You can do all kinds of magic, but some concepts like lifetimes may be confusing at the beginning.</p>

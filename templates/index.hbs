@@ -8,11 +8,17 @@
     <section class="section">
         <div class="container narrow">
             {{>about}}
+            <br>
             <!-- post content -->
             {{#each this}}
-            <a href="{{this.url}}.html" class="title button is-fullwidth is-dark">> {{this.title}}</a>
-            
+            <p class="has-text-grey-light">{{this.time}}</p>
+            <a href="{{this.url}}.html" class="title primary-text">> {{this.title}}</a>
+
             <p>{{this.intro}}</p>
+            <br>
+            <div class="has-text-right">
+                <a href="{{this.url}}.html" class="button primary-text">Read more</a>
+            </div>
             <br>
             <br> {{/each}}
 

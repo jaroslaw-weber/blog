@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog - Jaroslaw Weber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+    <section class="hero primary">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item primary"><i class="fas fa-plane"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io/blog">Blog</a>
+            <div class="navbar-item primary"><i class="fas fa-cloud"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io">Portfolio</a>
+        </div>
+    </nav>
+</section>
+    <section class="section">
+        <div class="container narrow">
+            <!-- post content -->
+            <h1 class="title has-text-centered primary-text">[idea] crates.io - sort by direct download</h1>
+            <p>I was looking on most downloaded crates on crates.io the other day and I noticed something interesting. 
+Most downloaded crates are not the most popular crates. I posted an issue on crates.io repository,
+but I also wanted to add it here.
+</p>
+<br>
+            <div class="has-text-centered">
+            <br>
+                <img class="article-image" src="https://image.freepik.com/free-vector/hands-with-medals-background-design_1212-271.jpg">
+                <br> <a href='https://www.freepik.com/free-vector/hands-with-medals-background-design_1001399.htm'>Designed by Freepik</a>
+
+            </div>
+            <h1 class="title bigtext primary-text">Problem</h1>
+<p class="text">I looked at top 30 of &quot;All-time Downloads&quot; and &quot;Recently Downloads&quot; crates.
+I found lot of crates that I have never used, heard of and probably won't use.
+Examples: <code>thread_local</code>, <code>aho-corasick</code>, <code>num-traits</code>, <code>memchr</code></p>
+<h1 class="title bigtext primary-text">What do I propose</h1>
+<p class="text">Implement new download counter, counting only &quot;direct dependencies downloads&quot; and allow to sort using it.</p>
+<h1 class="title bigtext primary-text">Details</h1>
+<p class="text">The name of the sort is open to a debate. The main idea is this:
+Each time a library downloads a crate, it would only count a download if downloaded crate was mentioned in <code>cargo.toml</code> file as a direct dependency. All crates dependent on direct dependencies would not count as a download. For example:</p>
+<pre><code>[dependencies] 
+regex = &quot;*&quot;
+</code></pre>
+<p class="text">Downloading <code>regex</code> crates also downloads dependencies of <code>regex</code>.  After downloading <code>regex</code> crate, only <code>regex</code> would count as a &quot;direct download&quot;. <code>regex</code> dependencies download count would not change.</p>
+<h1 class="title bigtext primary-text">Why?</h1>
+<p class="text">This type of sort would really indicate what crates are most popular. This type of sort would help to increase popular high-level crates discoveries. It would move <code>tokio</code>, <code>Rocket</code> or other similar crates more to the top and decrease the noise of crates most people probably won't use.</p>
+<h1 class="title bigtext primary-text">Problems with implementation</h1>
+<p class="text">This would probably require some additional implementation in the cargo's code.</p>
+
+            <!-- post content -->
+        </div>
+    </section>
+    <section class="section">
+    <div class="container">
+        <hr>
+        <footer>
+            <div class="has-text-centered">
+                <p class="title">contact</p>
+                <a class="button" href="mailto:jaroslaw.weber@gmail.com">jaroslaw.weber@gmail.com</a>
+            </div>
+        </footer>
+    </div>
+</section>
+</body>
+
+</html>

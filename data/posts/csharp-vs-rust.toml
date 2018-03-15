@@ -1,7 +1,11 @@
 title ="C# vs Rust"
 url = "csharp-vs-rust"
-time = "7.3.2018"
+time = "2018-03-07"
 content = "" #workaround for index error
+image="https://image.freepik.com/free-vector/website-rating-feedback_1325-235.jpg"
+image_contribution='''
+<a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
+'''
 intro = '''
 I started writing code in Rust few months ago. 
 I don't remember exactly why I started, but I soon realised it is a language of the future. 

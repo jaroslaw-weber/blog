@@ -8,45 +8,30 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: 'Mina', sans-serif;
-        }
-
-        .codeblock {
-            margin: 1rem;
-        }
-
-        .text {
-            margin: 1rem;
-        }
-
-        .bigtext {
-
-            margin-top: 2rem;
-        }
-        .narrow {
-            max-width: 600px;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
 
-    <section class="hero is-dark">
+    <section class="hero primary">
     <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-            <a class="navbar-item" href="index.html">@ Blog @</a>
+            <div class="navbar-item primary"><i class="fas fa-plane"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io/blog">Blog</a>
+            <div class="navbar-item primary"><i class="fas fa-cloud"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io">Portfolio</a>
         </div>
     </nav>
 </section>
     <section class="section">
         <div class="container narrow">
-            <div class="has-text-centered">
+            <!--
+<div class="has-text-centered">
 
     <p class="title">About me</p>
     <p>
-        Frontend Engineer. Mostly C# experience, some hobby projects in Rust.
+        C# developer.
     </p>
     <br>
     <a href="https://jaroslaw-weber.github.io" class="button">more about me</a>
@@ -58,15 +43,36 @@
 
 
 </div>
+-->
+            <br>
             <!-- post content -->
             
-            <a href="rust-crates-i-use.html" class="title button is-fullwidth is-dark">> Rust crates I use</a>
-            
-            <p>This is an introduction of few crates I used in the past and that I found very useful.</p>
+            <p class="has-text-grey-light">2018-03-15</p>
+            <a href="crates-io-sort-by-direct-download.html" class="title primary-text">> [idea] crates.io - sort by direct download</a>
+
+            <p>I was looking on most downloaded crates on crates.io the other day and I noticed something interesting. 
+Most downloaded crates are not the most popular crates. I posted an issue on crates.io repository,
+but I also wanted to add it here.
+</p>
+            <br>
+            <div class="has-text-right">
+                <a href="crates-io-sort-by-direct-download.html" class="button primary-text">Read more</a>
+            </div>
             <br>
             <br> 
-            <a href="csharp-vs-rust.html" class="title button is-fullwidth is-dark">> C# vs Rust</a>
-            
+            <p class="has-text-grey-light">2018-03-14</p>
+            <a href="rust-crates-i-use.html" class="title primary-text">> Rust crates I use</a>
+
+            <p>This is an introduction of few crates I used in the past and that I found very useful.</p>
+            <br>
+            <div class="has-text-right">
+                <a href="rust-crates-i-use.html" class="button primary-text">Read more</a>
+            </div>
+            <br>
+            <br> 
+            <p class="has-text-grey-light">2018-03-07</p>
+            <a href="csharp-vs-rust.html" class="title primary-text">> C# vs Rust</a>
+
             <p>I started writing code in Rust few months ago. 
 I don't remember exactly why I started, but I soon realised it is a language of the future. 
 Most of new languages focus mostly on syntax, 
@@ -74,6 +80,10 @@ Rust tries to solves problems that currently popular languages have and explore 
 I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
 I will try to present what features I miss in C# after programming in Rust for some time.
 </p>
+            <br>
+            <div class="has-text-right">
+                <a href="csharp-vs-rust.html" class="button primary-text">Read more</a>
+            </div>
             <br>
             <br> 
 

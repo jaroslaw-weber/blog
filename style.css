@@ -1,0 +1,27 @@
+body {
+    font-family: 'Mina', sans-serif;
+}
+
+.codeblock {
+    margin: 1rem;
+}
+
+.text {
+    margin: 1rem;
+}
+
+.bigtext {
+    margin-top: 2rem;
+}
+
+.narrow {
+    max-width: 600px;
+}
+
+.primary-bg {
+    background-color: darkred;
+}
+
+.white-text {
+    color: white;
+}

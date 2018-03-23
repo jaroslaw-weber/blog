@@ -8,9 +8,9 @@ image_contribution='''
 '''
 intro = '''
 I started writing code in Rust few months ago. 
-I don't remember exactly why I started, but I soon realised it is a language of the future. 
+I don't remember exactly how I learned about Rust, but I realised soon, that it is a language of the future. 
 Most of new languages focus mostly on syntax, 
-Rust tries to solves problems that currently popular languages have and explore new ideas. 
+but Rust tries to solves problems that currently popular languages have not solve yet by exploring new ideas. 
 I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
 I will try to present what features I miss in C# after programming in Rust for some time.
 '''

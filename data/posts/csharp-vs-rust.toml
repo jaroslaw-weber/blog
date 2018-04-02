@@ -7,10 +7,9 @@ image_contribution='''
 <a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
 '''
 intro = '''
-I started writing code in Rust few months ago. 
-I don't remember exactly how I learned about Rust, but I realised soon, that it is a language of the future. 
-Most of new languages focus mostly on syntax, 
-but Rust tries to solves problems that currently popular languages have not solve yet by exploring new ideas. 
+After using Rust for few months, I am in awe of the language. 
+It is really different from current languages, and have lot of innovative ideas.
 I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
-I will try to present what features I miss in C# after programming in Rust for some time.
+In this blog post, I will try to explain what features I would love to have in C#.
+Features that Rust already have implemented.
 '''

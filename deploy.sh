@@ -22,6 +22,7 @@ fi
 echo "> generating website"
 cargo run
 cp style.css generated/style.css
+cp highlight generated/highlight
 
 echo "> deploying"
 REV=$(git rev-parse --short HEAD)

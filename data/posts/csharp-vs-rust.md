@@ -1,9 +1,9 @@
 # Option
 
-Rust uses `Option` to elimnate `NullReferenceException`. Rust does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
+Rust uses `Option` to eliminate `NullReferenceException`. It is the most common runtime error in C# so there is a lot of focus to solve it. Recently, languages like Kotlin and Swift are using `Option` instead of nulls. Rust is the same. Rust does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
 Let's say we have a function in C#:
 
-```
+```csharp
 void DoSomething(SomeClass someClass)
 {
     var x = someClass.GetX();
@@ -12,15 +12,15 @@ void DoSomething(SomeClass someClass)
 
 If we accidentally pass null into the method, we get a runtime error. When debugging, you need to find where this error happened and think why it happened. In Rust you can write:
 
-```
+```rust
 fn do_something(some_struct: &SomeStruct)
 {
     let x = some_struct.get_x();
 }
 ```
-We can guarantee that this won't crash. Rust does not have classes. It uses structs instead. Just like in C#, struct cannot be null. How would we express "lack of value" with Option then?
+`some_struct` cannot be null. Rust does not have classes. It uses structs instead. Just like in C#, struct cannot be null. How would we express "lack of value" with Option then?
 
-```
+```rust
 let content : Option<String> = read_file("text.txt");
 ```
 *Disclaimer: There is no `read_file` function, I use simplifications in all examples to keep the concept simple.*
@@ -29,11 +29,11 @@ let content : Option<String> = read_file("text.txt");
 
 So why `Option`? Why not just use plain nullable type?
 
-Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot try use `split` on `Option<String>`. You need to unwrap first. This way, Rust guarantees that there is no exception unhandled. So, to access the value, you need to unwrap it first. This prevent's from trying to access a field from something that does not exists.
+Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot use `split` on `Option<String>`. You need to unwrap first explicitly, to access the value. This way, Rust guarantees that there is no exception unhandled. This prevents from trying to access something that does not exists.
 
 We can use `unwrap()` function to get the value inside, but it is not recommended. It is dirty and quick solution for prototyping. 
 
-```
+```rust
 let content : Option<String> = read_file("text.txt");
 let content_unwrapped : String = content.unwrap();
 ```
@@ -42,22 +42,23 @@ let content_unwrapped : String = content.unwrap();
 
 `expect` would be better in this case. It allows you to provide custom message.
 
-```
+```rust
 let content : Option<String> = read_file("text.txt");
-let content_unwrapped : String = content.expect("failed to read file!")
+let content_unwrapped : String = content.expect("failed to read file!");
+```
+
+The short version would be:
+
+```rust
+let content = read_file("text.txt").expect("failed to read file!");
 ```
 
 How would we write custom error in C#?
 
-```
-void Foo()
-{
-    string content = ReadFile("text.txt");
-    if(content == null || file == string.Empty)
-    {
-        new System.Exception("failed to read the file!");
-    }
-}
+```csharp
+string content = ReadFile("text.txt");
+if(string.IsNullOrEmpty(content))
+    throw new System.Exception("failed to read the file!");
 ```
 Much more verbose and bulky. Rust code is more compact and elegant.
 
@@ -67,38 +68,41 @@ Much more verbose and bulky. Rust code is more compact and elegant.
 
 Crashing an app is not always a good way to handle an error.
 
-So what would you do to avoid crashes in C#? You would probably write null checks in every possible place or wrap things in `try/catch`. Error handling in C# is horrible and very difficult.
+So what would you do to avoid crashes in C#? You would probably write null checks in every possible place or wrap things in `try/catch`. Error handling in C# is difficult.
 
 To solve this problem, Rust have something called `Result`.
 
 `Result` is like an `Option`, but contains information (error), why some action failed.
 Let's see some example code:
 
-```
+```rust
 let content : Result<String, Error> = read_file("text.txt");
 ```
-This looks just like option but with some small addition. `read_file` can five us file or give us error struct. For non-trivial projects, it is better to create custom errors. Handling everything with only strings (like in Option example) is too simple for more complex projects.
+This looks just like option but with some small addition. `read_file` can five us file or give us error struct. For non-trivial projects, it is better to create custom errors. Handling everything with one type of error is too simple.
 
 Let's say we want to have a function which reads second line of a file. We want to handle all errors. What possible "bad things" can happen? File may not exist. Also it may not have second line (it may be one-line file). We could try something like this:
 
-```
+```rust
 fn get_second_line() -> Result<String,MyError>
 {
     let file_result : Result<String, Error> = read_file("some_text.txt");
     let file : String;
-    if file_result.is_ok() //check if reading file succeeded
+    //check if reading file succeeded
+    if file_result.is_ok() 
     {
-        file = file_result.unwrap(); //safe unwrap because we checked!
+        //safe unwrap because we checked!
+        file = file_result.unwrap(); 
     }
     else
     {
         return MyError::new("failed to get file");
     }
     let lines = file.lines();
-    let first_line_option = lines.next(); //next means just "take next line from lines"
+    let first_line_option = lines.next(); 
     let second_line_option = lines.next();
     let second_line : String;
-    if second_line_option.is_ok() //checking if value is there
+    //checking if value is there
+    if second_line_option.is_ok() 
     {
         second_line = second_line_option.unwrap();
     }
@@ -106,15 +110,19 @@ fn get_second_line() -> Result<String,MyError>
     {
         return MyError::new("failed to read second line");
     }
-    Ok(second_line) //Ok is creating a Result wrapper. We cannot just return string because we said that we will return value in wrapper in the function signature
+    Ok(second_line)
+    /*
+    Ok is creating a Result wrapper. 
+    We cannot just return string because in function signature we stated,
+    that we will return value in a Result wrapper
+    */
 }
 
 ```
-*Disclaimer: Rust promoted `match` instead of `if`, but I used it because of familiar syntax.*
 
-This is a long function. Nobody wants to write it like this. That is why there is a `?` syntax and `try!` macro. `?` helps us write the same thing in just few lines of code.
+This is a long function. But we can use `?` syntax to make this simpler. `?` is just a safe unwrapping with early return. 
 
-```
+```rust
 fn read_second_line() -> Result<String, Error>
 {
     let file: String = read_file("some_text.txt")?;
@@ -127,22 +135,12 @@ fn read_second_line() -> Result<String, Error>
 So much shorter right? And we handled **all** the possible exceptions. This won`t crash.
 This helps us handle all the exceptions explicitly and keep code short and clean.
 
-Each `?` is just a safe unwrapping with early return. Writing this in C# would be a nightmare (like the first version I wrote)
-
-Also, did you notice lack of `return` keyword? It can be ommited in Rust. Makes your code little shorter.
-
 **TLDR**:  Special syntax and `Result` helps explicitly handle all errors and keep code clean and short. Handling errors in Rust is very easy.
 
-# Why use wrappers?
-
-It is all about the control. We, as a library user, can decide that we don't want to crash the application, even if some library (for example, parsing json) fails. Instead of crashing with exception, we can deal with it in more elegant way, and provide a flow without bulky and easy to forget `try/catch` statement. Every library in C# can crash unexpectedly. If you don't wrap the methods in `try/catch` you will have a potential crash waiting there.
-
-Most of libraries in Rust don't crash when something goes wrong. You get a value in a `Result` wrapper. You can see how "unsafe" the library is, just by searching `unwrap`, `except` in code. Libraries returns `Result` so you are deciding what do you want to do if something goes wrong.
-
-# Failure
+# Failure & language modularity
 
 How would we implement Error with standard library? Let's see example from the [Rust book](https://doc.rust-lang.org/std/error/trait.Error.html):
-```
+```rust
 
 #[derive(Debug)]
 struct SuperError {
@@ -167,9 +165,9 @@ impl Error for SuperError {
 
 ```
 This is kind of funny, but way too long. Is there a better way to do this?
-There is. It is called `chain_error` crate. The description on github is "Error boilerplate for Rust". Let`s see if it`s really improving the situation. This is the example from documentation:
+There is. It is called `chain_error` crate. The description on github is "Error boilerplate for Rust". Let's see if it's really improving the situation. This is the example from documentation:
 
-```
+```rust
 mod other_error {
     error_chain! {}
 }
@@ -195,17 +193,17 @@ error_chain! {
         }
 
         UnknownToolchainVersion(v: String) {
-            description("unknown toolchain version"), // note the ,
-            display("unknown toolchain version: '{}'", v), // trailing comma is allowed
+            description("unknown toolchain version"),
+            display("unknown toolchain version: '{}'", v),
         }
     }
 }
 ```
 There is lot of stuff going on. It is not just simple implementing error. Still, if you look closely, implementing new errors is just 3 lines of code per error. It is shorter than implementing everything by hand. But can we do better?
 
-New crated appeared lately. It is called `failure`. Without much theory, let's see an example:
+There is a new crate, called `failure`. Without much theory, let's see an example:
 
-```
+```rust
 #[derive(Debug, Fail)]
 enum ToolchainError {
     #[fail(display = "invalid toolchain name: {}", name)]
@@ -231,7 +229,7 @@ Still, putting error handling in external library seems odd. But error handling 
 
 C# uses NuGet as a package manager. Let's see what is inside the config file (nuget.config):
 
-```
+```xml
 <packageSources>
     <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
     <add key="Contoso" value="https://contoso.com/packages/" />
@@ -239,12 +237,9 @@ C# uses NuGet as a package manager. Let's see what is inside the config file (nu
 </packageSources>
 ```
 
-This is just a small part of config file.
-Overly verbose and complicated. XML is useful but is it realy the best solution for config files? "npm" (javascript's package manager) is using json for config files. I think it is better, but is there something even better?
+Let's compare this to Rust's config file:
 
-Actually there is. Rust use "Toml" for config file. What is Toml? It is a new markup language similar to YAML but more simple. Example project (yes, whole project) config file in Rust:
-
-```
+```toml
 [package]
 name = "blog"
 version = "0.1.0"
@@ -256,27 +251,27 @@ toml = "0.4.5"
 easy_fs = {git = "https://github.com/jaroslaw-weber/easy_fs"} 
 ```
 
-So easy and clean! Even someone who doesn't even know Toml can read and edit it. One line per dependency (more if configuration is more complicated)
+So easy and clean! Even someone who doesn't even know TOML (language which is used for config files) can read and edit it. One line per dependency (more if configuration is more complicated)
 
 **TLDR**: Simpler config files.
 
 # Immutability by default
 
 When declaring a variable in Rust, the variable is immutable by default. If we would try do this:
-```
+
+```rust
 let v = Vec::new();
 v.push(1);
 ```
+
 the compiler would scream and code wouldn't compile. We need to explicitly say:
-```
+
+```rust
 let mut v = Vec::new();
 v.push(1);
 ```
-to be able to mutate the variable.
 
-Too much mutable state is bad. If something is wrong with values of some field in struct/class, we need to find out who access it. With mutability by default (in C#), we need to check everything related to the field/class that had wrong values. With lot of code it may be difficult to find. By explicitly defining mutability, we need to only check places which were able to mutate the struct. Less debugging.
-
-**TLDR**: Easier debugging because of immutability by default.
+Explicit mutability makes code simpler. We produce more "pure functions" (no "side effects"). Pure functions are often easier to debug and reason about. F# is also a language with immutability by default.
 
 # Macros
 
@@ -294,9 +289,11 @@ Macros enables you to statically check the correctness. Compiler won't compile y
 
 # Full control over memory
 
-Rust does not have garbage collector. GC has a runtime overhead. If you want to have faster implementation of something in C# you would have to write it in another language and import as `.dll` file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called "lifetimes". Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than "reference counting" (and smart pointers) which you may know from other languages, like Swift or C++. 
+Rust does not have garbage collector. GC has a runtime overhead. 
 
-```
+If you want to have faster implementation of something in C# you would have to write it in another language and import as `.dll` file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called "lifetimes". Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than "reference counting" (and smart pointers) which you may know from other languages, like Swift or C++. 
+
+```rust
 fn foo()
 {
     let x = 3;
@@ -312,7 +309,7 @@ fn foo()
 
 Traits are like interfaces in C#, but traits can also contain implementation. For example:
 
-```
+```rust
 trait HaveExtension
 {
     extension_without_dot: String
@@ -328,7 +325,7 @@ trait HaveExtension
 There are some limitations to it - you can only use fields declared inside trait. You could use abstract class in C#, but you could avoid the inheritance and create mixins-like classes with traits. It is as safe as using an interface, but more flexible.
 There is also another great thing about traits.
 
-```
+```rust
 #[derive(Debug,PartialEq,Copy)]
 struct Point {
     x: i32,
@@ -345,8 +342,10 @@ It is also an "abstraction without overhead" (term borrowed from official Rust b
 
 It is my personal preference, but I find Rust's syntax more elegant than C#. 
 
-Functions are more readable because of the snake case. `ThisIsVeryLongFunctionName` would be `this_is_very_long_function_name` in Rust. Rust is very minimalistic in all aspects, hiding unnecessary complexity, but also being explicit about important things.
-```
+Functions are more readable because of the snake case. `ThisIsVeryLongFunctionName` would be `this_is_very_long_function_name` in Rust. 
+
+Rust is very minimalistic in all aspects, hiding unnecessary complexity, but also being explicit about important things.
+```csharp
 using System;
 namespace HelloWorld
 {
@@ -360,7 +359,7 @@ namespace HelloWorld
 }
 ```
 would be
-```
+```rust
 fn main ()
 {
     println!("hello world!");
@@ -369,33 +368,24 @@ fn main ()
 in Rust.
 
 The other nice thing about Rust's syntax is that `return` keyword is not necessary:
-```
+```rust
 fn double(x:i32)-> i32
 {
     x*2
 }
 ```
-Last line (without semicolon) is just returning a value. `return` is really redundant in C#. 
 
-Rust deals with `Option` and `Result` using only `?`. It is very simple, and yet very powerful. It is similar in functionality to `??` ("elvis operator") in C# for nullchecks.
+Rust is using `?` for unwrapping `Result`. This makes writing error handling much easier than in C#.
 
-I like how Rust changed `int` to `i32`. In C# you would write `float` or `ulong` in C# would be `f32` or `u64` in Rust. Much shorter syntax.
+I like how Rust changed classic type aliases.
+`int` became `i32`, `float` is `f32` and `ulong` is `u64`. The syntax is shorter and has all the information needed.
 
 **TLDR**: Nicer syntax (in my opinion)
-
-# Safety
-
-Rust unique features prevent lot of problems which would otherwise appear on runtime. If something compiles, it is probably much safer than same thing written in different language.
-Option prevents null exceptions, lifetimes/borrowing prevents from data races.
-
-"If it compiles, it works" is the motto of Rust. This is THE safest language (comparable to haskell) and that is why it's used for multithreading and programming reliable systems.
-
-**TLDR**: Less bugs, more stable.
 
 # Compiler errors
 
 Compiler errors are beautiful in Rust. If you write this:
-```
+```rust
 fn main() {
        let v = Vec::new();
        v.push(1);
@@ -403,7 +393,7 @@ fn main() {
 ```
 you will get this error:
 
-```
+```rust
 error[E0596]: cannot borrow immutable local variable `v` as mutable
  --> src/main.rs:3:8
   |
@@ -415,7 +405,7 @@ error[E0596]: cannot borrow immutable local variable `v` as mutable
 
 This error is showing not only what happened, but also where it happened (with nice little arrow). It also shows you a context (part of code) and very often a solution! "consider changing this to `mut v`" is explaining how to fix the code!
 
-```
+```rust
 fn main() {
        let mut v = Vec::new();
        v.push(1);
@@ -429,6 +419,8 @@ We listened to the compiler and now it is working!
 # rustfmt
 
 Have you ever argued with coworker on syntax? Have you ever have your PR rejected cause you didn't add a space before "="? Rust have "official guidelines" for formatting. Almost all the code wrote in rust have same syntax. Everyone uses autoformating with same setup. Even things like snake case or camel case are giving warnings on compilation.
+
+Some people argue that formatting should not be defined by someone, and the programmer should decide how to structure his code. Still, I was really happy that I don't need to focus on formatting, setting up my IDE, fix my PRs and could focus on coding.
 
 # Multiplatform support
 

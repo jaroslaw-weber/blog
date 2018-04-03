@@ -7,9 +7,9 @@ image_contribution='''
 <a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
 '''
 intro = '''
-After using Rust for few months, I am in awe of the language. 
-It is really different from current languages, and have lot of innovative ideas.
-I am using mostly C# at my work and I often wish I could use some of the features Rust have. 
+After using Rust for few months, it became my favorite programming language. 
+It is really different from other languages, and has a lot of innovative ideas.
+I am using mostly C# at my work and I often wish I could use some of the features that Rust have. 
 In this blog post, I will try to explain what features I would love to have in C#.
 Features that Rust already have implemented.
 '''

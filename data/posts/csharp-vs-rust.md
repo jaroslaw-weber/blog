@@ -1,6 +1,6 @@
 # Option
 
-Rust uses `Option` to eliminate `NullReferenceException`. It is the most common runtime error in C# so there is a lot of focus to solve it. Recently, languages like Kotlin and Swift are using `Option` instead of nulls. Rust is the same. Rust does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
+Rust uses `Option` instead of `null`. `NullReferenceException` is the most common runtime error in C# so there are already some plans for solving this problem in future C# versions (non nullable reference types). Recently, languages like Kotlin and Swift are using `Option` instead of nulls. Rust is another language that does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
 Let's say we have a function in C#:
 
 ```csharp
@@ -10,7 +10,7 @@ void DoSomething(SomeClass someClass)
 }
 ```
 
-If we accidentally pass null into the method, we get a runtime error. When debugging, you need to find where this error happened and think why it happened. In Rust you can write:
+If we accidentally pass null into the method, we get a runtime error (when calling `.GetX()`). In Rust you would write it like this:
 
 ```rust
 fn do_something(some_struct: &SomeStruct)
@@ -18,18 +18,20 @@ fn do_something(some_struct: &SomeStruct)
     let x = some_struct.get_x();
 }
 ```
-`some_struct` cannot be null. Rust does not have classes. It uses structs instead. Just like in C#, struct cannot be null. How would we express "lack of value" with Option then?
+and calling `.get_x()` would be safe here. `some_struct` is a "reference to a struct" and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And this type of reference (`&`) cannot be null too. 
+
+How would we express "lack of value" with `Option` then?
 
 ```rust
 let content : Option<String> = read_file("text.txt");
 ```
 *Disclaimer: There is no `read_file` function, I use simplifications in all examples to keep the concept simple.*
 
-`read_file` function can fail - for example, there is no file to read. But in this case, it will return result wrapped in option - if everything went without problems, we would get `Some(content)` as a result. If something went bad, we would get `None`.
+`read_file` function can fail - for example, there is no file to read. But in this case, it will return result wrapped in `Option` - if everything went without problems, we would get `Some(content)` as a result. If something went bad, we would get `None`.
 
 So why `Option`? Why not just use plain nullable type?
 
-Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot use `split` on `Option<String>`. You need to unwrap first explicitly, to access the value. This way, Rust guarantees that there is no exception unhandled. This prevents from trying to access something that does not exists.
+Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot use `split()` function on `Option<String>`. You need to unwrap first explicitly, to access the value. It is like accessing `int?` with `.Value` in C#. This way, Rust guarantees that there is no exception unhandled. This prevents from trying to access something that does not exists.
 
 We can use `unwrap()` function to get the value inside, but it is not recommended. It is dirty and quick solution for prototyping. 
 
@@ -40,7 +42,7 @@ let content_unwrapped : String = content.unwrap();
 
 `unwrap` tries to take value from the `Option` but panics (crash) if there is no value (`None` value). The error is not very helpful. There is no explicit error message. Default error doesn't even point you to the place where it happened.
 
-`expect` would be better in this case. It allows you to provide custom message.
+`expect` would be better in this case. It allows you to provide custom error message.
 
 ```rust
 let content : Option<String> = read_file("text.txt");
@@ -78,7 +80,7 @@ Let's see some example code:
 ```rust
 let content : Result<String, Error> = read_file("text.txt");
 ```
-This looks just like option but with some small addition. `read_file` can five us file or give us error struct. For non-trivial projects, it is better to create custom errors. Handling everything with one type of error is too simple.
+This looks just like option but with some small addition. `read_file` can five us file or give us error struct.
 
 Let's say we want to have a function which reads second line of a file. We want to handle all errors. What possible "bad things" can happen? File may not exist. Also it may not have second line (it may be one-line file). We could try something like this:
 
@@ -135,7 +137,7 @@ fn read_second_line() -> Result<String, Error>
 So much shorter right? And we handled **all** the possible exceptions. This won`t crash.
 This helps us handle all the exceptions explicitly and keep code short and clean.
 
-**TLDR**:  Special syntax and `Result` helps explicitly handle all errors and keep code clean and short. Handling errors in Rust is very easy.
+**TLDR**:  Special `?` syntax and `Result` helps explicitly handle all errors and keep code clean and short. Handling errors in Rust is very easy.
 
 # Failure & language modularity
 
@@ -164,7 +166,7 @@ impl Error for SuperError {
 }
 
 ```
-This is kind of funny, but way too long. Is there a better way to do this?
+This is kind of funny, but the implementation is way too long. Is there a better way to do this?
 There is. It is called `chain_error` crate. The description on github is "Error boilerplate for Rust". Let's see if it's really improving the situation. This is the example from documentation:
 
 ```rust
@@ -199,7 +201,7 @@ error_chain! {
     }
 }
 ```
-There is lot of stuff going on. It is not just simple implementing error. Still, if you look closely, implementing new errors is just 3 lines of code per error. It is shorter than implementing everything by hand. But can we do better?
+There is lot of stuff going on. It is not just simple implementing error. Still, if you look closely, implementing new errors is just 3 lines of code per error. It is shorter than implementing everything with only stardard library. But can we do better?
 
 There is a new crate, called `failure`. Without much theory, let's see an example:
 
@@ -384,7 +386,7 @@ I like how Rust changed classic type aliases.
 
 # Compiler errors
 
-Compiler errors are beautiful in Rust. If you write this:
+Compiler errors are very informative in Rust. If you write this:
 ```rust
 fn main() {
        let v = Vec::new();
@@ -433,30 +435,15 @@ I tried to install docfx on mac. I couldn't because there was a bug "linux and m
 I often hit the "not windows, sorry" wall, those two examples are from last month only.
 The tooling in Rust is open source and multiplatform from the very beginning.
 
-# Future of Rust and C#
-
-Rust version iterations are much faster than C#. We are currently on 1.24 version (semver). For the next version of C# you would need to wait months. The experimental channel (nightly) is very accessible - you just type a command to switch between different versions of the compiler.
-
-Ever heard of someone using "experimental features" in C# project? Rust's "nightly" allows you to enable only those features you really need. You need to declare in code "I will use this feature" to use it. Otherwise it is very similar to the stable compiler and you can clearly see what parts of your code may be unstable (by explicitly stating what features will you use).
-
-C# is going to probably implement a lot of features that Rust already have.  There are already propositions for non-nullable references as default (which would reduce null exceptions on runtime, probably going to be released in 8.0 version of the language). I also saw macros proposition but I think it is a long way from people even thinking about an actual implementation.
-
-Rust currently uses semver for versioning and for did not yet implement any breaking change and is still on version 1.x . So the language is very stable and already used in multiple projects. 
-
-There are some plans to implement "editions". It is a new type of versioning of Rust. "editions" in Rust would allow language to introduce breaking changes with very long warning periods, which would allow the language to ditch old, obsolete solutions, but also create a way for a transition to new, better version of Rust. 
-If you ever used python, you've probably heard about problems when moving from python 2 to python 3. Breaking changes are good, but language need a transition system to avoid breakage of ecosystem (like the one that happened to python).
-Each transition would be easy because of the warnign periods, so compiler would help you upgrade your code (something like autoupdating api in Unity3d).
-
-**TLDR**: Lot of new features without breaking compability and losing stability. Also ability to introduce breaking changes in language with smooth transition to new version.
-
 # What is better in C#?
 
-Rust is still a young language and still needs some improvement. Personally, I would probably use Rust more, if it had a great GUI library. There are some GUI solutions currently, but nothing really outstanding. We need something like Electron but with Rust.
+Rust is still a young language and still needs some improvement. Personally, I would probably use Rust more, if it had a great GUI library. There are some GUI solutions currently, but nothing really outstanding. We need something like Electron, but with Rust.
 
 Rust may be also more difficult when creating a game. Rust is great for CLI apps. But it is so much easier to work with Unity3D than creating a game in any Rust game engine library. Mainly because of the Editor.
+
 Rust is generally more difficult. You can do all kinds of magic, but some concepts like lifetimes may be confusing at the beginning.
 
-Compile times are long in Rust. You can avoid some waiting with "incremental compilation" which is just partial compilation of parts which changed. But it is still slower than C#.
+Compile times are long in Rust. You can avoid some waiting with "incremental compilation" which is just partial compilation of only those parts which has changed since last compilation. Still, it is slower than C#.
 
 But I do believe Rust will become a mainstream language some day. The community is great and idea behind it is promising. 
 

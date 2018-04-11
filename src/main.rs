@@ -63,6 +63,7 @@ fn main() {
     let index_data = Toml::Array(posts_data_sorted);
     s.generate("index", "index", &index_data)
         .expect("failed to generate index");
+    s.copy_static_files();
 }
 
 fn parse_date(input: &str) -> Result<DateTime<chrono::FixedOffset>, chrono::ParseError> {

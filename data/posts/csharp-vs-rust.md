@@ -1,6 +1,9 @@
 # Option
 
-Rust uses `Option` instead of `null`. `NullReferenceException` is the most common runtime error in C# so there are already some plans for solving this problem in future C# versions (non nullable reference types). Recently, languages like Kotlin and Swift are using `Option` instead of nulls. Rust is another language that does not have `null`. Instead, you can express "lack of value" with an `Option` wrapper. It is so much easier to work with options than nulls.
+Rust does not have `null`. Instead it uses `Option` wrapper to express the "lack of value".
+
+`NullReferenceException` is the most common runtime error in C#, so there are already some plans for solving this problem in future C# versions (non nullable reference types). Many modern languages, like Kotlin or Swift, are using `Option` instead of nullable reference types. It is so much easier to work with options than nulls.
+
 Let's say we have a function in C#:
 
 ```csharp
@@ -10,7 +13,9 @@ void DoSomething(SomeClass someClass)
 }
 ```
 
-If we accidentally pass null into the method, we get a runtime error (when calling `.GetX()`). In Rust you would write it like this:
+If we accidentally pass null into the method, we get a runtime error (when calling `.GetX()`). 
+
+In Rust you would write it like this:
 
 ```rust
 fn do_something(some_struct: &SomeStruct)
@@ -18,16 +23,16 @@ fn do_something(some_struct: &SomeStruct)
     let x = some_struct.get_x();
 }
 ```
-and calling `.get_x()` would be safe here. `some_struct` is a "reference to a struct" and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And this type of reference (`&`) cannot be null too. 
+and calling `.get_x()` would be safe here. `some_struct` is a "reference to a struct" and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And the reference (`&`) cannot be null too. 
 
 How would we express "lack of value" with `Option` then?
 
 ```rust
 let content : Option<String> = read_file("text.txt");
 ```
-*Disclaimer: There is no `read_file` function, I use simplifications in all examples to keep the concept simple.*
+*Disclaimer: There is no `read_file` function in standard library, I use simplifications in all examples to keep it simple.*
 
-`read_file` function can fail - for example, there is no file to read. But in this case, it will return result wrapped in `Option` - if everything went without problems, we would get `Some(content)` as a result. If something went bad, we would get `None`.
+`read_file` function can fail - for example, there is no file to read. But in this case, it will return result wrapped in `Option` - if everything went without problems, we would get `Some(text)` as a result. If something went bad, we would get `None`.
 
 So why `Option`? Why not just use plain nullable type?
 

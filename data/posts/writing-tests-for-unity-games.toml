@@ -1,0 +1,16 @@
+title ="Writing tests for Unity games"
+url = "writing-tests-for-unity-games"
+time = "2018-04-19"
+content = "" #workaround for index error
+
+image="https://image.freepik.com/free-vector/pattern-about-video-games_1172-118.jpg"
+image_contribution='''
+<a href='https://www.freepik.com/free-vector/pattern-about-video-games_959700.htm'>Designed by Freepik</a>
+'''
+intro = '''
+In my day job I am mostly a game developer. 
+Most game projects are probably writing tests for back end, but what about front end?
+What kind of tests can you write?
+I am using Unity3D as game engine, and it has recently added something called Unity Test Runner.
+I have tried it recently and here are the results.
+'''

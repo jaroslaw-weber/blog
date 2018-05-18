@@ -31,10 +31,10 @@
     </nav>
 </section>
     <section class="section">
-        <div class="container narrow">
+        <div class="container narrow content">
             <!-- post content -->
             <h1 class="title has-text-centered primary-text">C# vs Rust</h1>
-            <p>After using Rust for few months, it became my favorite programming language. 
+            <p>After using Rust for a few months, it is currently my favorite programming language. 
 It is really different from other languages, and has a lot of innovative ideas.
 I am using mostly C# at my work and I often wish I could use some of the features that Rust have. 
 In this blog post, I will try to explain what features I would love to have in C#.
@@ -48,25 +48,27 @@ Features that Rust already have implemented.
 
             </div>
             <h1 class="title bigtext primary-text">Option</h1>
-<p class="text">Rust uses <code>Option</code> instead of <code>null</code>. <code>NullReferenceException</code> is the most common runtime error in C# so there are already some plans for solving this problem in future C# versions (non nullable reference types). Recently, languages like Kotlin and Swift are using <code>Option</code> instead of nulls. Rust is another language that does not have <code>null</code>. Instead, you can express &quot;lack of value&quot; with an <code>Option</code> wrapper. It is so much easier to work with options than nulls.
-Let's say we have a function in C#:</p>
+<p class="text">Rust does not have <code>null</code>. Instead it uses <code>Option</code> wrapper to express the &quot;lack of value&quot;.</p>
+<p class="text"><code>NullReferenceException</code> is the most common runtime error in C#, so there are already some plans for solving this problem in future C# versions (non nullable reference types). Many modern languages, like Kotlin or Swift, are using <code>Option</code> instead of nullable reference types. It is so much easier to work with options than nulls.</p>
+<p class="text">Let's say we have a function in C#:</p>
 <pre><code class="language-csharp">void DoSomething(SomeClass someClass)
 {
     var x = someClass.GetX();
 }
 </code></pre>
-<p class="text">If we accidentally pass null into the method, we get a runtime error (when calling <code>.GetX()</code>). In Rust you would write it like this:</p>
+<p class="text">If we accidentally pass null into the method, we get a runtime error (when calling <code>.GetX()</code>).</p>
+<p class="text">In Rust you would write it like this:</p>
 <pre><code class="language-rust">fn do_something(some_struct: &amp;SomeStruct)
 {
     let x = some_struct.get_x();
 }
 </code></pre>
-<p class="text">and calling <code>.get_x()</code> would be safe here. <code>some_struct</code> is a &quot;reference to a struct&quot; and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And this type of reference (<code>&amp;</code>) cannot be null too.</p>
+<p class="text">and calling <code>.get_x()</code> would be safe here. <code>some_struct</code> is a &quot;reference to a struct&quot; and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And the reference (<code>&amp;</code>) cannot be null too.</p>
 <p class="text">How would we express &quot;lack of value&quot; with <code>Option</code> then?</p>
 <pre><code class="language-rust">let content : Option&lt;String&gt; = read_file(&quot;text.txt&quot;);
 </code></pre>
-<p class="text"><em>Disclaimer: There is no <code>read_file</code> function, I use simplifications in all examples to keep the concept simple.</em></p>
-<p class="text"><code>read_file</code> function can fail - for example, there is no file to read. But in this case, it will return result wrapped in <code>Option</code> - if everything went without problems, we would get <code>Some(content)</code> as a result. If something went bad, we would get <code>None</code>.</p>
+<p class="text"><em>Disclaimer: There is no <code>read_file</code> function in standard library, I use simplifications in all examples to keep it simple.</em></p>
+<p class="text"><code>read_file</code> function can fail - for example, there is no file to read. But in this case, it will return result wrapped in <code>Option</code> - if everything went without problems, we would get <code>Some(text)</code> as a result. If something went bad, we would get <code>None</code>.</p>
 <p class="text">So why <code>Option</code>? Why not just use plain nullable type?</p>
 <p class="text">Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot use <code>split()</code> function on <code>Option&lt;String&gt;</code>. You need to unwrap first explicitly, to access the value. It is like accessing <code>int?</code> with <code>.Value</code> in C#. This way, Rust guarantees that there is no exception unhandled. This prevents from trying to access something that does not exists.</p>
 <p class="text">We can use <code>unwrap()</code> function to get the value inside, but it is not recommended. It is dirty and quick solution for prototyping.</p>
@@ -148,7 +150,7 @@ Let's see some example code:</p>
 This helps us handle all the exceptions explicitly and keep code short and clean.</p>
 <p class="text"><strong>TLDR</strong>:  Special <code>?</code> syntax and <code>Result</code> helps explicitly handle all errors and keep code clean and short. Handling errors in Rust is very easy.</p>
 <h1 class="title bigtext primary-text">Failure &amp; language modularity</h1>
-<p class="text">How would we implement Error with standard library? Let's see example from the <a href="https://doc.rust-lang.org/std/error/trait.Error.html">Rust book</a>:</p>
+<p class="text">How would we implement Error with standard library? Let's see the example from the <a href="https://doc.rust-lang.org/std/error/trait.Error.html">Rust book</a>:</p>
 <pre><code class="language-rust">
 #[derive(Debug)]
 struct SuperError {
@@ -264,7 +266,7 @@ Macros enables you to statically check the correctness. Compiler won't compile y
 <p class="text"><strong>TLDR</strong>: Less boilerplate, better performance than reflection.</p>
 <h1 class="title bigtext primary-text">Full control over memory</h1>
 <p class="text">Rust does not have garbage collector. GC has a runtime overhead.</p>
-<p class="text">If you want to have faster implementation of something in C# you would have to write it in another language and import as <code>.dll</code> file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called &quot;lifetimes&quot;. Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than &quot;reference counting&quot; (and smart pointers) which you may know from other languages, like Swift or C++.</p>
+<p class="text">If you want to have faster implementation of something in C# you would have to write it in another language and import as <code>.dll</code> file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called &quot;lifetimes&quot;. Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than &quot;reference counting&quot; (and smart pointers) which you may know from other languages, like Swift or C++. If you heard about term RAII, you will be probably familiar with the topic.</p>
 <pre><code class="language-rust">fn foo()
 {
     let x = 3;
@@ -368,8 +370,7 @@ The tooling in Rust is open source and multiplatform from the very beginning.</p
 <p class="text">Rust may be also more difficult when creating a game. Rust is great for CLI apps. But it is so much easier to work with Unity3D than creating a game in any Rust game engine library. Mainly because of the Editor.</p>
 <p class="text">Rust is generally more difficult. You can do all kinds of magic, but some concepts like lifetimes may be confusing at the beginning.</p>
 <p class="text">Compile times are long in Rust. You can avoid some waiting with &quot;incremental compilation&quot; which is just partial compilation of only those parts which has changed since last compilation. Still, it is slower than C#.</p>
-<p class="text">But I do believe Rust will become a mainstream language some day. The community is great and idea behind it is promising.</p>
-<p class="text">Rust made me enjoy programming again.</p>
+<p class="text">But I do believe Rust will become a mainstream language some day. The community is great and it is a great modern language with lot of useful and innovative features.</p>
 
             <!-- post content -->
         </div>

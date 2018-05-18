@@ -1,0 +1,11 @@
+title ="Creating custom blog engine with about 100LOC"
+url = "rewriting-javascript-into-rust-with-wasm"
+time = "2018-05-18"
+content = "" #workaround for index error
+image="https://image.freepik.com/free-vector/website-rating-feedback_1325-235.jpg"
+image_contribution='''
+<a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
+'''
+intro = '''
+'''
+publish = false

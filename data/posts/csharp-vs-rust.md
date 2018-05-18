@@ -146,7 +146,7 @@ This helps us handle all the exceptions explicitly and keep code short and clean
 
 # Failure & language modularity
 
-How would we implement Error with standard library? Let's see example from the [Rust book](https://doc.rust-lang.org/std/error/trait.Error.html):
+How would we implement Error with standard library? Let's see the example from the [Rust book](https://doc.rust-lang.org/std/error/trait.Error.html):
 ```rust
 
 #[derive(Debug)]
@@ -298,7 +298,7 @@ Macros enables you to statically check the correctness. Compiler won't compile y
 
 Rust does not have garbage collector. GC has a runtime overhead. 
 
-If you want to have faster implementation of something in C# you would have to write it in another language and import as `.dll` file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called "lifetimes". Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than "reference counting" (and smart pointers) which you may know from other languages, like Swift or C++. 
+If you want to have faster implementation of something in C# you would have to write it in another language and import as `.dll` file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called "lifetimes". Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than "reference counting" (and smart pointers) which you may know from other languages, like Swift or C++. If you heard about term RAII, you will be probably familiar with the topic.
 
 ```rust
 fn foo()
@@ -450,6 +450,4 @@ Rust is generally more difficult. You can do all kinds of magic, but some concep
 
 Compile times are long in Rust. You can avoid some waiting with "incremental compilation" which is just partial compilation of only those parts which has changed since last compilation. Still, it is slower than C#.
 
-But I do believe Rust will become a mainstream language some day. The community is great and idea behind it is promising. 
-
-Rust made me enjoy programming again.
+But I do believe Rust will become a mainstream language some day. The community is great and it is a great modern language with lot of useful and innovative features.

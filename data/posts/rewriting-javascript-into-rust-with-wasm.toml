@@ -8,8 +8,7 @@ image_contribution='''
 '''
 intro = '''
 Wasm (Web Assembly) is a new technology allowing people to use languages other than javascript inside browser.
-Wasm allows to not only use another languages but also gain performance.
+Wasm allows to not only use another languages but also creates possibility to improve performance.
 Rust programming language is currently heavily investing in easy deploying wasm applications.
 I decided to try rewrite my javascript front-end script with Rust and wasm and see what is possible.
 '''
-publish = false

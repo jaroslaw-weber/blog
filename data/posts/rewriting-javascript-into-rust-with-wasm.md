@@ -10,7 +10,7 @@ So I rewrote my javascript to Rust.
 
 I found out about quasar and yew. Great projects. But I didn't want to make a one page application. I would need to load everything before displaying a website which is not good for user experience, especially on small site targeted for both pc and mobile. Also, I wanted to stay SEO friendly as much as possible. So I decided to go the "jQuery way" - create static page and manipulate it later.
 
-For creating static page I site generation library I created - slime. It loads data from toml files and put it inside handlebars templates.
+For creating static page I used site generation library I created - [slime](https://github.com/jaroslaw-weber/slime). It loads data from toml files and put it inside handlebars templates.
 
 For dom manipulation I used stdweb.
 
@@ -50,7 +50,7 @@ Yew is another library for doing front-end with Rust.
 
 [https://github.com/DenisKolodin/yew](https://github.com/DenisKolodin/yew)
 
-It is very similar to quasar but little more verbose. It is currently the most popular library for writing front-end in Rust (4000 starts, over 100 forks). It has a lot of examples.
+It is quite similar to quasar but little more verbose. It is currently the most popular library for writing front-end in Rust (about 4000 stars, over 100 forks). It has a lot of examples. This is probably the best choice right now.
 
 # stdweb
 
@@ -77,12 +77,6 @@ let inputs = form.query_selector_all("input").expect("no input");
 ```
 
 Same as javascript. It was mostly like writing javascript with types.
-
-# Rewriting script in rust
-
-Rewriting everything was quite easy. I was already familiar with toml crate, and querying form was also easy with stdweb.
-The problem was mainly with not being able to use all creates (like chrono, unfortunately) and getting everything working (it was my first wasm project so I was not sure how to set it up).
-The other problem was app size.
 
 # Datetime problem
 
@@ -126,7 +120,7 @@ Not bad, especially that it is loading in the background asynchronously (so it w
 
 There is actually a page, where you can read about this stuff:
 
-[Link Here](https://rust-lang-nursery.github.io/rust-wasm/game-of-life/code-size.html)
+[Optimising wasm file size](https://rust-lang-nursery.github.io/rust-wasm/game-of-life/code-size.html)
 
 # It is working! But...
 
@@ -153,22 +147,15 @@ My website is handling some sensitive data and user don't want the data to be st
 
 # Build times again...
 
-Unfortunately, my build times got much longer. I was only using plain javascript before so there was no "build step". Yes, we can cache things in GitHub, but first build is painfully long.
+Unfortunately, my build times got much longer. I was only using plain javascript before so there was no "build step". It is taking 17 minutes now, even with caching cargo in travis.
 
 # Same page, second app
 
-I wanted to also create script for analysing the toml files and showing the result on the same page by manipulating DOM. Still, I wanted to have it as a separate project from the "form to toml" part. So I created new project.
-
-# Async dom update
-
-I wanted user to be able to upload multiple times at the same time and update the dom as the file is ready. 
-
-I had a list which I wanted update on file upload. So I deleted all nodes each time there was new file uploaded, and then added new list elements (rebuilding list compeletely). 
-
-But asynchronously rebuilding list had a bug. It was creating new elements too slow and list had a lot of duplicates. So I used "replace_node" for replacing the list elements. 
-This time I did not get duplicates.
+I wanted to also create script for analysing the toml files. I wanted to have it as a separate project from the "form to toml" part. So I created new project.
 
 # Mysterious bug, bad mutex and disappearing errors
+
+I wanted user to be able to upload multiple times at the same time and update the dom as the file is ready. 
 
 Working on my script I started getting mysterious error:
 ```
@@ -184,9 +171,16 @@ The problem was... mutex locks. I added mutex when I decided to add asynchronous
 
 # Cross-platform GUI solution?
 
-Wasm may be THE way to create cross-platform gui apps with Rust. It is cross-platform, you don't need to pack whole browser to use it (lighter than electron), and it is easy to build (with some wrappers like yew/quasar). You could also post it on github pages for free.
+Wasm may be THE way to create cross-platform GUI apps with Rust. It is cross-platform, you don't need to pack whole browser to use it (lighter than electron), and it is easy to build (with some wrappers like yew/quasar). It is also easy to write because we don't need to learn new library, we can just use "old plain html with css". You could also post it on github pages for free.
+
+# My experience with WebAssembly
+
+It did not take me long to find out how to start a wasm project. The setup was not compilicated (especially with wasm-unknown-unknown target available!). Stdweb was quite straightforward.
+I was suprised how easy it was to write front-end in Rust.
 
 The problem may be some crates not working ("chrono") on wasm yet. Still, you can find some workarounds with javascript libraries.
+
+I wonder if Rust will have more "wasm-only" libraries in the future. Lot of libraries are not optimising their codebase for binary size. We could use some "light" versions of libraries. The binary size in wasm is very important.
 
 The overall experience with wasm was great. I see a great potential in it and hope yew/quasar libraries get better.
 

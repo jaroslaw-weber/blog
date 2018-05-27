@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog - Jaroslaw Weber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+
+
+    <!-- highlighting syntax-->
+    <link rel="stylesheet" href="static/highlight/styles/github.css">
+    <script src="static/highlight/highlight.pack.js"></script>
+    <!---->
+
+    <link rel="stylesheet" href="static/style.css">
+    
+
+</head>
+
+<body>
+    <section class="hero primary">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item primary"><i class="fas fa-plane"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io/blog">Blog</a>
+            <div class="navbar-item primary"><i class="fas fa-cloud"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io">Portfolio</a>
+        </div>
+    </nav>
+</section>
+    <section class="section">
+        <div class="container narrow content">
+            <!-- post content -->
+            <h1 class="title has-text-centered primary-text">C# vs Rust</h1>
+            <p>After using Rust for a few months, it is currently my favorite programming language. 
+It is really different from other languages, and has a lot of innovative ideas.
+I am using mostly C# at my work and I often wish I could use some of the features that Rust have. 
+In this blog post, I will try to explain what features I would love to have in C#.
+Features that Rust already have implemented.
+</p>
+<br>
+            <div class="has-text-centered">
+            <br>
+                <img class="article-image" src="https://image.freepik.com/free-vector/website-rating-feedback_1325-235.jpg">
+                <br> <a href='https://www.freepik.com/free-vector/website-rating-feedback_1338555.htm'>Designed by Freepik</a>
+
+            </div>
+            <h1 class="title bigtext primary-text">Option</h1>
+<p class="text">Rust does not have <code>null</code>. Instead it uses <code>Option</code> wrapper to express the &quot;lack of value&quot;.</p>
+<p class="text"><code>NullReferenceException</code> is the most common runtime error in C#, so there are already some plans for solving this problem in future C# versions (non nullable reference types). Many modern languages, like Kotlin or Swift, are using <code>Option</code> instead of nullable reference types. It is so much easier to work with options than nulls.</p>
+<p class="text">Let's say we have a function in C#:</p>
+<pre><code class="language-csharp">void DoSomething(SomeClass someClass)
+{
+    var x = someClass.GetX();
+}
+</code></pre>
+<p class="text">If we accidentally pass null into the method, we get a runtime error (when calling <code>.GetX()</code>).</p>
+<p class="text">In Rust you would write it like this:</p>
+<pre><code class="language-rust">fn do_something(some_struct: &amp;SomeStruct)
+{
+    let x = some_struct.get_x();
+}
+</code></pre>
+<p class="text">and calling <code>.get_x()</code> would be safe here. <code>some_struct</code> is a &quot;reference to a struct&quot; and is guaranteed to have a value. Rust does not have classes, it uses structs instead. Just like in C#, struct cannot be null. And the reference (<code>&amp;</code>) cannot be null too.</p>
+<p class="text">How would we express &quot;lack of value&quot; with <code>Option</code> then?</p>
+<pre><code class="language-rust">let content : Option&lt;String&gt; = read_file(&quot;text.txt&quot;);
+</code></pre>
+<p class="text"><em>Disclaimer: There is no <code>read_file</code> function in standard library, I use simplifications in all examples to keep it simple.</em></p>
+<p class="text"><code>read_file</code> function can fail - for example, there is no file to read. But in this case, it will return result wrapped in <code>Option</code> - if everything went without problems, we would get <code>Some(text)</code> as a result. If something went bad, we would get <code>None</code>.</p>
+<p class="text">So why <code>Option</code>? Why not just use plain nullable type?</p>
+<p class="text">Option is a wrapper so it does not allow directly access wrapped value inside it. You cannot use <code>split()</code> function on <code>Option&lt;String&gt;</code>. You need to unwrap first explicitly, to access the value. It is like accessing <code>int?</code> with <code>.Value</code> in C#. This way, Rust guarantees that there is no exception unhandled. This prevents from trying to access something that does not exists.</p>
+<p class="text">We can use <code>unwrap()</code> function to get the value inside, but it is not recommended. It is dirty and quick solution for prototyping.</p>
+<pre><code class="language-rust">let content : Option&lt;String&gt; = read_file(&quot;text.txt&quot;);
+let content_unwrapped : String = content.unwrap();
+</code></pre>
+<p class="text"><code>unwrap</code> tries to take value from the <code>Option</code> but panics (crash) if there is no value (<code>None</code> value). The error is not very helpful. There is no explicit error message. Default error doesn't even point you to the place where it happened.</p>
+<p class="text"><code>expect</code> would be better in this case. It allows you to provide custom error message.</p>
+<pre><code class="language-rust">let content : Option&lt;String&gt; = read_file(&quot;text.txt&quot;);
+let content_unwrapped : String = content.expect(&quot;failed to read file!&quot;);
+</code></pre>
+<p class="text">The short version would be:</p>
+<pre><code class="language-rust">let content = read_file(&quot;text.txt&quot;).expect(&quot;failed to read file!&quot;);
+</code></pre>
+<p class="text">How would we write custom error in C#?</p>
+<pre><code class="language-csharp">string content = ReadFile(&quot;text.txt&quot;);
+if(string.IsNullOrEmpty(content))
+    throw new System.Exception(&quot;failed to read the file!&quot;);
+</code></pre>
+<p class="text">Much more verbose and bulky. Rust code is more compact and elegant.</p>
+<p class="text"><strong>TLDR</strong>: <code>Option</code> is better than <code>null</code>. No runtime null exceptions, every possible &quot;lack of value&quot; must be explicitly handled. Writing custom exceptions is much easier and more compact.</p>
+<h1 class="title bigtext primary-text">Result &amp; &quot;?&quot; syntax</h1>
+<p class="text">Crashing an app is not always a good way to handle an error.</p>
+<p class="text">So what would you do to avoid crashes in C#? You would probably write null checks in every possible place or wrap things in <code>try/catch</code>. Error handling in C# is difficult.</p>
+<p class="text">To solve this problem, Rust have something called <code>Result</code>.</p>
+<p class="text"><code>Result</code> is like an <code>Option</code>, but contains information (error), why some action failed.
+Let's see some example code:</p>
+<pre><code class="language-rust">let content : Result&lt;String, Error&gt; = read_file(&quot;text.txt&quot;);
+</code></pre>
+<p class="text">This looks just like option but with some small addition. <code>read_file</code> can five us file or give us error struct.</p>
+<p class="text">Let's say we want to have a function which reads second line of a file. We want to handle all errors. What possible &quot;bad things&quot; can happen? File may not exist. Also it may not have second line (it may be one-line file). We could try something like this:</p>
+<pre><code class="language-rust">fn get_second_line() -&gt; Result&lt;String,MyError&gt;
+{
+    let file_result : Result&lt;String, Error&gt; = read_file(&quot;some_text.txt&quot;);
+    let file : String;
+    //check if reading file succeeded
+    if file_result.is_ok() 
+    {
+        //safe unwrap because we checked!
+        file = file_result.unwrap(); 
+    }
+    else
+    {
+        return MyError::new(&quot;failed to get file&quot;);
+    }
+    let lines = file.lines();
+    let first_line_option = lines.next(); 
+    let second_line_option = lines.next();
+    let second_line : String;
+    //checking if value is there
+    if second_line_option.is_ok() 
+    {
+        second_line = second_line_option.unwrap();
+    }
+    else
+    {
+        return MyError::new(&quot;failed to read second line&quot;);
+    }
+    Ok(second_line)
+    /*
+    Ok is creating a Result wrapper. 
+    We cannot just return string because in function signature we stated,
+    that we will return value in a Result wrapper
+    */
+}
+
+</code></pre>
+<p class="text">This is a long function. But we can use <code>?</code> syntax to make this simpler. <code>?</code> is just a safe unwrapping with early return.</p>
+<pre><code class="language-rust">fn read_second_line() -&gt; Result&lt;String, Error&gt;
+{
+    let file: String = read_file(&quot;some_text.txt&quot;)?;
+    let lines = file.lines();
+    let first_line: String = lines.next()?;
+    let second_line: String = lines.next()?;
+    Ok(second_line)
+}
+</code></pre>
+<p class="text">So much shorter right? And we handled <strong>all</strong> the possible exceptions. This won`t crash.
+This helps us handle all the exceptions explicitly and keep code short and clean.</p>
+<p class="text"><strong>TLDR</strong>:  Special <code>?</code> syntax and <code>Result</code> helps explicitly handle all errors and keep code clean and short. Handling errors in Rust is very easy.</p>
+<h1 class="title bigtext primary-text">Failure &amp; language modularity</h1>
+<p class="text">How would we implement Error with standard library? Let's see the example from the <a href="https://doc.rust-lang.org/std/error/trait.Error.html">Rust book</a>:</p>
+<pre><code class="language-rust">
+#[derive(Debug)]
+struct SuperError {
+    side: SuperErrorSideKick,
+}
+
+impl fmt::Display for SuperError {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        write!(f, &quot;SuperError is here!&quot;)
+    }
+}
+
+impl Error for SuperError {
+    fn description(&amp;self) -&gt; &amp;str {
+        &quot;I'm the superhero of errors&quot;
+    }
+
+    fn cause(&amp;self) -&gt; Option&lt;&amp;Error&gt; {
+        Some(&amp;self.side)
+    }
+}
+
+</code></pre>
+<p class="text">This is kind of funny, but the implementation is way too long. Is there a better way to do this?
+There is. It is called <code>chain_error</code> crate. The description on github is &quot;Error boilerplate for Rust&quot;. Let's see if it's really improving the situation. This is the example from documentation:</p>
+<pre><code class="language-rust">mod other_error {
+    error_chain! {}
+}
+
+error_chain! {
+    types {
+        Error, ErrorKind, ResultExt, Result;
+    }
+
+    links {
+        Another(other_error::Error, other_error::ErrorKind) #[cfg(unix)];
+    }
+
+    foreign_links {
+        Fmt(::std::fmt::Error);
+        Io(::std::io::Error) #[cfg(unix)];
+    }
+
+    errors {
+        InvalidToolchainName(t: String) {
+            description(&quot;invalid toolchain name&quot;)
+            display(&quot;invalid toolchain name: '{}'&quot;, t)
+        }
+
+        UnknownToolchainVersion(v: String) {
+            description(&quot;unknown toolchain version&quot;),
+            display(&quot;unknown toolchain version: '{}'&quot;, v),
+        }
+    }
+}
+</code></pre>
+<p class="text">There is lot of stuff going on. It is not just simple implementing error. Still, if you look closely, implementing new errors is just 3 lines of code per error. It is shorter than implementing everything with only stardard library. But can we do better?</p>
+<p class="text">There is a new crate, called <code>failure</code>. Without much theory, let's see an example:</p>
+<pre><code class="language-rust">#[derive(Debug, Fail)]
+enum ToolchainError {
+    #[fail(display = &quot;invalid toolchain name: {}&quot;, name)]
+    InvalidToolchainName {
+        name: String,
+    },
+    #[fail(display = &quot;unknown toolchain version: {}&quot;, version)]
+    UnknownToolchainVersion {
+        version: String,
+    }
+}
+</code></pre>
+<p class="text">This looks much simpler. So what was the point of presenting this 3 ways to implement error?</p>
+<p class="text">Why so many choices about error handling? Shouldn't errors be in the standard library? Well, one of Rust greatest strengths is flexibility. Standard library is reduced to necessary minimum. Every additional functionality needs to be imported from external library.</p>
+<p class="text">Still, putting error handling in external library seems odd. But error handling is also a part of a language that can be improved. If we decide to use one version of error handling we are doomed to use it forever. If we try to change it, when it is inside the standard library, we break whole language. Moving important parts to external libraries give Rust an opportunity to &quot;iterate&quot; through different solutions. That is how <code>failure</code> was born. First, we had only standard <code>Error</code>. But the functionality was not enough, and writing custom errors was bulky. So someone came up with <code>error_chain</code> crate for better error handling. Still, after using the <code>error_chain</code>, someone came up with better, more elegant solution which would eliminate downsides of <code>error_chain</code>.</p>
+<p class="text"><strong>TLDR</strong>: Lot of Rust's functionality is in external libraries. This solves problem of having standard library too big or not being able to depreciate old solutions for the sake of something new and better.</p>
+<h1 class="title bigtext primary-text">Package manager</h1>
+<p class="text">C# uses NuGet as a package manager. Let's see what is inside the config file (nuget.config):</p>
+<pre><code class="language-xml">&lt;packageSources&gt;
+    &lt;add key=&quot;nuget.org&quot; value=&quot;https://api.nuget.org/v3/index.json&quot; protocolVersion=&quot;3&quot; /&gt;
+    &lt;add key=&quot;Contoso&quot; value=&quot;https://contoso.com/packages/&quot; /&gt;
+    &lt;add key=&quot;Test Source&quot; value=&quot;c:\packages&quot; /&gt;
+&lt;/packageSources&gt;
+</code></pre>
+<p class="text">Let's compare this to Rust's config file:</p>
+<pre><code class="language-toml">[package]
+name = &quot;blog&quot;
+version = &quot;0.1.0&quot;
+authors = [&quot;Jaroslaw Weber &lt;jaroslaw.weber@gmail.com&gt;&quot;]
+
+[dependencies]
+slime = &quot;0.4.0&quot;
+toml = &quot;0.4.5&quot;
+easy_fs = {git = &quot;https://github.com/jaroslaw-weber/easy_fs&quot;} 
+</code></pre>
+<p class="text">So easy and clean! Even someone who doesn't even know TOML (language which is used for config files) can read and edit it. One line per dependency (more if configuration is more complicated)</p>
+<p class="text"><strong>TLDR</strong>: Simpler config files.</p>
+<h1 class="title bigtext primary-text">Immutability by default</h1>
+<p class="text">When declaring a variable in Rust, the variable is immutable by default. If we would try do this:</p>
+<pre><code class="language-rust">let v = Vec::new();
+v.push(1);
+</code></pre>
+<p class="text">the compiler would scream and code wouldn't compile. We need to explicitly say:</p>
+<pre><code class="language-rust">let mut v = Vec::new();
+v.push(1);
+</code></pre>
+<p class="text">Explicit mutability makes code simpler. We produce more &quot;pure functions&quot; (no &quot;side effects&quot;). Pure functions are often easier to debug and reason about. F# is also a language with immutability by default.</p>
+<h1 class="title bigtext primary-text">Macros</h1>
+<p class="text">Have you ever tried generate code with C#? You can do it with T4 templates or try manually generating files. If you ever make mistake in the template or generating script and generate it, you will need some time to undo it (probably reseting the changes with git command). Also you need to actually generate the code to check if template is valid. Not very pleasant experience.</p>
+<p class="text">What else could you do? You could use reflection and make your implementation 3 times slower. Not a great solution also.</p>
+<p class="text">Macros are just a way to generate code without creating new files.
+If you ever tried C++ macros you may think macros are evil. Overusing macros is bad practice, but no macros creates lot of boilerplate code.</p>
+<p class="text">Rust macros are safer. Basically there are 2 types of macros: function-like and attribute-like.
+Macros enables you to statically check the correctness. Compiler won't compile your code if something is wrong with macro. You are also not creating any new files, and can insert macros almost anywhere. This prevents you from creating too many files when you are doing a lot of code generation, and let keep your project clean and simple.</p>
+<p class="text"><strong>TLDR</strong>: Less boilerplate, better performance than reflection.</p>
+<h1 class="title bigtext primary-text">Full control over memory</h1>
+<p class="text">Rust does not have garbage collector. GC has a runtime overhead.</p>
+<p class="text">If you want to have faster implementation of something in C# you would have to write it in another language and import as <code>.dll</code> file. Rust's speed is similar to C++ and C. But wouldn't manual control over memory be more dangerous and difficult to write? Not exactly. Rust have something called &quot;lifetimes&quot;. Rust automatically release resources from the memory without explicitly calling deallocation functions. It is different concept than &quot;reference counting&quot; (and smart pointers) which you may know from other languages, like Swift or C++. If you heard about term RAII, you will be probably familiar with the topic.</p>
+<pre><code class="language-rust">fn foo()
+{
+    let x = 3;
+    let y = Point::new(1,3);
+}
+</code></pre>
+<p class="text"><code>x</code> and <code>y</code> would be released from memory when <code>foo()</code> ends. Even without the garbage collector, you don't need to manage memory manually.</p>
+<p class="text"><strong>TLDR</strong>: Better performance without manually managing memory.</p>
+<h1 class="title bigtext primary-text">Traits</h1>
+<p class="text">Traits are like interfaces in C#, but traits can also contain implementation. For example:</p>
+<pre><code class="language-rust">trait HaveExtension
+{
+    extension_without_dot: String
+
+    //adds dot before extension name and return it
+    fn get_extension_with_dot() -&gt; String
+    {
+        format!(&quot;.{}&quot;, &amp;extension_without_dot)
+    }
+}
+</code></pre>
+<p class="text">There are some limitations to it - you can only use fields declared inside trait. You could use abstract class in C#, but you could avoid the inheritance and create mixins-like classes with traits. It is as safe as using an interface, but more flexible.
+There is also another great thing about traits.</p>
+<pre><code class="language-rust">#[derive(Debug,PartialEq,Copy)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+</code></pre>
+<p class="text">You can &quot;derive&quot; some traits. Deriving is just using macros for generating an implementation. So a lot of times you don't need to even implement the trait, because macro is doing it for you.</p>
+<p class="text">It is also an &quot;abstraction without overhead&quot; (term borrowed from official Rust blog). What it means is that you usually get some overhead when using generics. But with traits you don't have any overhead (static dispatch). So it is faster than generics (dynamic dispatch). Still, you can use generics in Rust so the solution is very flexible.</p>
+<p class="text"><strong>TLDR</strong>: Better performance than simple generics, also more functionality than interfaces. Autoderive saves lot of implementation boilerplate.</p>
+<h1 class="title bigtext primary-text">Syntax</h1>
+<p class="text">It is my personal preference, but I find Rust's syntax more elegant than C#.</p>
+<p class="text">Functions are more readable because of the snake case. <code>ThisIsVeryLongFunctionName</code> would be <code>this_is_very_long_function_name</code> in Rust.</p>
+<p class="text">Rust is very minimalistic in all aspects, hiding unnecessary complexity, but also being explicit about important things.</p>
+<pre><code class="language-csharp">using System;
+namespace HelloWorld
+{
+    class Hello 
+    {
+        static void Main() 
+        {
+            Console.WriteLine(&quot;Hello World!&quot;);
+        }
+    }
+}
+</code></pre>
+<p class="text">would be</p>
+<pre><code class="language-rust">fn main ()
+{
+    println!(&quot;hello world!&quot;);
+}
+</code></pre>
+<p class="text">in Rust.</p>
+<p class="text">The other nice thing about Rust's syntax is that <code>return</code> keyword is not necessary:</p>
+<pre><code class="language-rust">fn double(x:i32)-&gt; i32
+{
+    x*2
+}
+</code></pre>
+<p class="text">Rust is using <code>?</code> for unwrapping <code>Result</code>. This makes writing error handling much easier than in C#.</p>
+<p class="text">I like how Rust changed classic type aliases.
+<code>int</code> became <code>i32</code>, <code>float</code> is <code>f32</code> and <code>ulong</code> is <code>u64</code>. The syntax is shorter and has all the information needed.</p>
+<p class="text"><strong>TLDR</strong>: Nicer syntax (in my opinion)</p>
+<h1 class="title bigtext primary-text">Compiler errors</h1>
+<p class="text">Compiler errors are very informative in Rust. If you write this:</p>
+<pre><code class="language-rust">fn main() {
+       let v = Vec::new();
+       v.push(1);
+}
+</code></pre>
+<p class="text">you will get this error:</p>
+<pre><code class="language-rust">error[E0596]: cannot borrow immutable local variable `v` as mutable
+ --&gt; src/main.rs:3:8
+  |
+2 |        let v = Vec::new();
+  |            - consider changing this to `mut v`
+3 |        v.push(1);
+  |        ^ cannot borrow mutably
+</code></pre>
+<p class="text">This error is showing not only what happened, but also where it happened (with nice little arrow). It also shows you a context (part of code) and very often a solution! &quot;consider changing this to <code>mut v</code>&quot; is explaining how to fix the code!</p>
+<pre><code class="language-rust">fn main() {
+       let mut v = Vec::new();
+       v.push(1);
+}
+</code></pre>
+<p class="text">We listened to the compiler and now it is working!</p>
+<p class="text"><strong>TLDR</strong>: Nice errors, easier to debug and fix.</p>
+<h1 class="title bigtext primary-text">rustfmt</h1>
+<p class="text">Have you ever argued with coworker on syntax? Have you ever have your PR rejected cause you didn't add a space before &quot;=&quot;? Rust have &quot;official guidelines&quot; for formatting. Almost all the code wrote in rust have same syntax. Everyone uses autoformating with same setup. Even things like snake case or camel case are giving warnings on compilation.</p>
+<p class="text">Some people argue that formatting should not be defined by someone, and the programmer should decide how to structure his code. Still, I was really happy that I don't need to focus on formatting, setting up my IDE, fix my PRs and could focus on coding.</p>
+<h1 class="title bigtext primary-text">Multiplatform support</h1>
+<p class="text">C# is a Microsoft's baby. It is kind of multiplatform, but everything started on Windows. So there are some things you can do only on Windows.</p>
+<p class="text">I tried removing all unused usings from the project. I would need to pay for Resharper and use Windows to do that.</p>
+<p class="text">I tried to install docfx on mac. I couldn't because there was a bug &quot;linux and mac only&quot;.</p>
+<p class="text">I often hit the &quot;not windows, sorry&quot; wall, those two examples are from last month only.
+The tooling in Rust is open source and multiplatform from the very beginning.</p>
+<h1 class="title bigtext primary-text">What is better in C#?</h1>
+<p class="text">Rust is still a young language and still needs some improvement. Personally, I would probably use Rust more, if it had a great GUI library. There are some GUI solutions currently, but nothing really outstanding. We need something like Electron, but with Rust.</p>
+<p class="text">Rust may be also more difficult when creating a game. Rust is great for CLI apps. But it is so much easier to work with Unity3D than creating a game in any Rust game engine library. Mainly because of the Editor.</p>
+<p class="text">Rust is generally more difficult. You can do all kinds of magic, but some concepts like lifetimes may be confusing at the beginning.</p>
+<p class="text">Compile times are long in Rust. You can avoid some waiting with &quot;incremental compilation&quot; which is just partial compilation of only those parts which has changed since last compilation. Still, it is slower than C#.</p>
+<p class="text">But I do believe Rust will become a mainstream language some day. The community is great and it is a great modern language with lot of useful and innovative features.</p>
+
+            <!-- post content -->
+        </div>
+    </section>
+    <section class="section">
+    <div class="container">
+        <hr>
+        <footer>
+            <div class="has-text-centered">
+                <p class="title">contact</p>
+                <a class="button" href="mailto:jaroslaw.weber@gmail.com">jaroslaw.weber@gmail.com</a>
+            </div>
+        </footer>
+    </div>
+</section>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+
+</html>

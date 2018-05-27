@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog - Jaroslaw Weber</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+
+
+    <!-- highlighting syntax-->
+    <link rel="stylesheet" href="static/highlight/styles/github.css">
+    <script src="static/highlight/highlight.pack.js"></script>
+    <!---->
+
+    <link rel="stylesheet" href="static/style.css">
+    
+
+</head>
+
+<body>
+    <section class="hero primary">
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <div class="navbar-item primary"><i class="fas fa-plane"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io/blog">Blog</a>
+            <div class="navbar-item primary"><i class="fas fa-cloud"></i></div>
+            <a class="navbar-item primary" href="https://jaroslaw-weber.github.io">Portfolio</a>
+        </div>
+    </nav>
+</section>
+    <section class="section">
+        <div class="container narrow content">
+            <!-- post content -->
+            <h1 class="title has-text-centered primary-text">Writing tests for Unity games</h1>
+            <p>In my day job I am mostly a game developer. 
+Most game projects are probably writing tests for back end, but what about front end?
+What kind of tests can you write?
+I am using Unity3D as game engine, and it has recently added something called Unity Test Runner.
+I have tried it recently and here are the results.
+</p>
+<br>
+            <div class="has-text-centered">
+            <br>
+                <img class="article-image" src="https://image.freepik.com/free-vector/pattern-about-video-games_1172-118.jpg">
+                <br> <a href='https://www.freepik.com/free-vector/pattern-about-video-games_959700.htm'>Designed by Freepik</a>
+
+            </div>
+            <h1 class="title bigtext primary-text">What is Unity Test Runner</h1>
+<p class="text">Unity Test Runner is a tool for writing and running tests in Unity (hopefully with command line, integrated with CI).</p>
+<p class="text">Combining this with CI (Continous integration) can help testing code before merging/deploying. CI is big in Open Source projects, because you can check Pull Requests before even reviewing them. Tests are safety net, assurance that new functionality did not break anything. Unfortunately, not all projects use CI. The results are, sometimes someone pushes compile error to main branch.</p>
+<p class="text">I have tested UTR (Unity Test Runner) and found it quite useful. You can currently use it for simple tests and introduce it to your workflow, but the tool is still in early stages. I will try to explain more about the details and write about pain points I encountered.</p>
+<h1 class="title bigtext primary-text">Not enough documentation/resources</h1>
+<p class="text">This is the first problem with this tool.
+Test Runner is still in early stages (included in Unity since 5.5 version, I believe) and documentation and examples are sparse. There are no good articles about what kind of tests writing for a game. Lot of people don't even know this tool exist. I hope it will change in the future.</p>
+<h1 class="title bigtext primary-text">Very slow command line</h1>
+<p class="text">For some reason, running tests from command line was very slow, especially in Playmode. Playmode tests were all failing because of timeouts, but the timeouts were set to quite high values so I guess there is a bug. It will probably be fixed in future versions.</p>
+<h1 class="title bigtext primary-text">Support / Quality</h1>
+<p class="text">UTR is an official Unity functionality and is included in Unity3D by defaut. It is based on NUnit library which is relatively stable and good quality library. The Unity team is behind the UTR so we can assume basic level of support and quality. It is still in early stages, so we can expect lot of changes, but if the tool is considered to be useful and important, it will continue to be improved.</p>
+<h1 class="title bigtext primary-text">Usefulness of UI tests</h1>
+<p class="text">I am working on UI a lot, and was curious about testing UI. I thought it would be great to be able to test visual aspect of the game.</p>
+<p class="text">I was able to write some tests, but then, I was reconsidering their usefulness.</p>
+<p class="text">This was the overall structure of simple tests I wrote:</p>
+<pre><code>
+[UnityTest]
+[Timeout (Time.TenMinutes)]
+public IEnumerator BasicTest () {
+    yield return GoToScene1 ();
+    yield return CheckScene1 ();
+}
+
+[Timeout (Time.OneMinute)]
+private IEnumerator GoToScene1 () {
+    Actions.ClickButton (&quot;Scene1Button&quot;);
+    yield return Wait.ForSceneOpened&lt;Scene1&gt; ();
+}
+
+[Timeout (Time.FiveMinutes)]
+private IEnumerator CheckScene1 () {
+    yield return Open.AndClosePopup&lt;Popup1&gt;(&quot;Popup1Button&quot;);
+    yield return Open.AndClosePopup&lt;Popup2&gt;(&quot;Popup2Button&quot;);
+    yield return Open.AndClosePopup&lt;Popup3&gt;(&quot;Popup3Button&quot;);
+    yield return Open.AndClosePopup&lt;Popup4&gt;(&quot;Popup4Button&quot;);
+}
+</code></pre>
+<p class="text">When I ran those tests, I could catch null reference exceptions (missing references in inspector) or asserts that failed. It was quite useful, but writing those tests and framework (UI testing framework) took me too much of the time. But there are more simpler ways to write UI tests checks.</p>
+<h1 class="title bigtext primary-text">What tests can I write?</h1>
+<ul>
+<li>tests for missing references in inspector</li>
+<li>test for &quot;Missing Script&quot; problem</li>
+<li>tests of Model/Controller (if you use MVC), to check the UI logic</li>
+<li>checking missing prefabs (try load prefab and check for null)</li>
+<li>tests prefabs/asset bundle paths</li>
+<li>various calculations (calculating player stats)</li>
+<li>null checks (crawling player data and assuring that nothing is null)</li>
+<li>server endpoints (does it connect to server? do we get expected response when we send some request?)</li>
+</ul>
+<h1 class="title bigtext primary-text">Final notes</h1>
+<p class="text">I liked the tool, but I would love to see some real life examples and long articles about it. It has great potential, but it is still new. Still, I would encourage you to try it and integrate it into your workflow.</p>
+<h1 class="title bigtext primary-text">More info</h1>
+<p class="text">Official:
+https://docs.unity3d.com/Manual/testing-editortestsrunner.html</p>
+<p class="text">Youtube:
+https://www.youtube.com/watch?v=VqmcWnjreqg
+https://www.youtube.com/watch?v=GIJptHunxow</p>
+<p class="text">Testing UI:
+https://assetstore.unity.com/packages/tools/unity-ui-test-automation-72693</p>
+<p class="text">NUnit:
+http://nunit.org/</p>
+<p class="text">Bugs:
+https://forum.unity.com/threads/why-the-regressions-to-test-runner-in-unity-5-6.471548/
+https://issuetracker.unity3d.com/issues/running-editor-tests-with-batch-mode-doesnt-display-test-results</p>
+
+            <!-- post content -->
+        </div>
+    </section>
+    <section class="section">
+    <div class="container">
+        <hr>
+        <footer>
+            <div class="has-text-centered">
+                <p class="title">contact</p>
+                <a class="button" href="mailto:jaroslaw.weber@gmail.com">jaroslaw.weber@gmail.com</a>
+            </div>
+        </footer>
+    </div>
+</section>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+</body>
+
+</html>
